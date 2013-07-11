@@ -1,8 +1,8 @@
 #ifndef BASIC_TYPES_H
 #define BASIC_TYPES_H
 
-#define MSG_TYPE int
-#define ACK_TYPE int
+#define MSG_TYPE unsigned int
+#define ACK_TYPE unsigned int
 // why not working with int? dangling pointers?
 
 #define TIMEOUT 2
