@@ -31,22 +31,25 @@ SendProt::~SendProt () {
 	}
 }
 
-int StopNWait::sendMsg (MSG_TYPE *msg, int *slast) {
+int StopNWait::sendMsg (MSG_TYPE msg, ACK_TYPE *slast) {
 
-	ACK_TYPE ack;
-	int rnext = !(*slast);
+	ackbuff ack;
+	msgbuff msg_temp;
+	ACK_TYPE rnext = !(*slast);
 
 	signal(SIGALRM, alarm_dummy);
 
 	// append the slast
-	// msg ++ slast
+	msg_temp.msg = msg << SLAST_SIZE;
+	msg_temp.msg += *slast;
 
 	// apply theoretical error and CRC
 	// msg = error(msg ++ crc(msg))
+	msg_temp.msg = msg_temp.msg << CRC_SIZE; // simulation of crc
 		
 	// send the package to the transmition mean buffer
-	cout << "Sending message: " << *msg << endl;
-	if (msgsnd(inputChannelId, msg, sizeof(MSG_TYPE), 0) < 0) {
+	cout << "Sending message: " << msg_temp.msg << endl;
+	if (msgsnd(inputChannelId, &msg_temp, sizeof(msgbuff), 0) < 0) {
 		cout << "Error sending package through the msg queue: " << strerror(errno) << endl;
 		exit(1);
 	}
@@ -54,7 +57,7 @@ int StopNWait::sendMsg (MSG_TYPE *msg, int *slast) {
 	// wait for the ack or the timeout
 	cout << "Waiting for the acknowledge" << endl;
 	alarm(TIMEOUT);
-	if (msgrcv(outputChannelId, &ack, sizeof(ACK_TYPE), 0, 0) < 0)
+	if (msgrcv(outputChannelId, &ack, sizeof(ackbuff), 0, 0) < 0)
 		if (errno != EINTR){
 			cout << "Message Queue error: " << strerror(errno) << endl;
 			exit(1);
@@ -68,8 +71,9 @@ int StopNWait::sendMsg (MSG_TYPE *msg, int *slast) {
 		else if (EXTRACT_SLAST....*/
 
 		// extract slast from the ack and check it
-		if (EXTRACT_SLAST(ack) != rnext)
-			cout << "Received wrong acknowledge" << endl;
+		cout << "TESTER: ack = " << ack.ack << endl;
+		if (EXTRACT_RNEXT(ack.ack) != rnext)
+			cout << "Received wrong acknowledge - expected " << rnext << " but instead " << (EXTRACT_RNEXT(ack.ack)) << endl;
 		else {
 			cout << "Received correct acknowledge" << endl;
 			// update slast
@@ -86,13 +90,18 @@ int StopNWait::sendMsg (MSG_TYPE *msg, int *slast) {
 
 }
 
-int StopNWait::recvMsg (MSG_TYPE *msg, int *rnext) {
+int StopNWait::recvMsg (MSG_TYPE *msg, ACK_TYPE *rnext) {
 
-	ACK_TYPE ack;
+	ackbuff ack;
+	msgbuff msg_temp;
 
 	// receive message from the transmition mean buffer
-	cout << "Waiting message: " << *msg << endl;
-	if (msgrcv(inputChannelId, msg, sizeof(MSG_TYPE), 0, 0) < 0) {
+	cout << "Waiting message..."<< endl;
+	
+	//cout << "TESTER: rnext = " << *rnext << endl;
+	//cout << "rnext address: " << rnext << " msg address: " << msg << " size reed: " << sizeof(MSG_TYPE) << endl;
+
+	if (msgrcv(inputChannelId, &msg_temp, sizeof(msgbuff), 0, 0) < 0) {
 		cout << "Error sending package through the msg queue: " << strerror(errno) << endl;
 		exit(1);
 	}
@@ -103,13 +112,17 @@ int StopNWait::recvMsg (MSG_TYPE *msg, int *rnext) {
 		return false;
 	}*/
 
-	// otherwise check the slast
-	if (*rnext == EXTRACT_SLAST(*msg)) {
+	cout << "received = " << msg_temp.msg << endl;
+
+	// check the slast
+	if (*rnext == EXTRACT_SLAST(msg_temp.msg)) {
 		// if ok send updated rnext
 		cout << "Message received - Sending acknowledge" << endl;
 		*rnext = !(*rnext);
-		ack = *rnext;
+		ack.ack = *rnext;
 		// ack = ack ++ crc(ack)
+		ack.ack = ack.ack << CRC_SIZE; // simulation of crc
+		cout << "TESTER: ack = " << ack.ack << endl;
 		if (msgsnd(outputChannelId, &ack, sizeof(ACK_TYPE), 0) < 0) {
 			cout << "Error sending package through the msg queue: " << strerror(errno) << endl;
 			exit(1);
@@ -119,15 +132,15 @@ int StopNWait::recvMsg (MSG_TYPE *msg, int *rnext) {
 	}
 	// otherwise send actual rnext
 	else {
-		cout << "Message received is corrupted - Sending acknowledge" << endl;
-		ack = *rnext;
+		cout << "Message received isn't the requested - expected " << *rnext << " but received " << (EXTRACT_SLAST(msg_temp.msg)) << " - Sending acknowledge" << endl;
+		ack.ack = *rnext;
 		// ack = ack ++ crc(ack)
-		if (msgsnd(outputChannelId, &ack, sizeof(ACK_TYPE), 0) < 0) {
+		ack.ack = ack.ack << CRC_SIZE; // simulation of crc
+		if (msgsnd(outputChannelId, &ack, sizeof(MSG_TYPE), 0) < 0) {
 			cout << "Error sending package through the msg queue: " << strerror(errno) << endl;
 			exit(1);
 		}
 	}
-	
 	
 	return false;
 

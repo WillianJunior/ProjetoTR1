@@ -10,8 +10,8 @@ int main () {
 	
 	SendProt *sender;
 	int protocol;
-	int teste[3] = {1,2,3};
-	int rnext = 0;
+	MSG_TYPE teste[3] = {1,2,3};
+	ACK_TYPE rnext = 0;
 
 	while (1) {
 		cout << endl << "Select your protocol:" << endl
@@ -26,7 +26,7 @@ int main () {
 			case STOPNWAIT:
 				cout << "stopnwait" << endl << endl;
 				sender = new StopNWait();
-				sender->sendMsg(teste, &rnext);
+				sender->sendMsg(teste[0], &rnext);
 				break;
 
 			case SLIDINGWINDOW:
