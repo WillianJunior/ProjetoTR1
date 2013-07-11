@@ -1,25 +1,41 @@
 #ifndef TRANS_PROTOCOLS_H
 #define TRANS_PROTOCOLS_H
 
-#include <stdio.h>
+#include <iostream>
+
 #include <stdlib.h>
+
+#include <errno.h>
+#include <string.h>
+#include <time.h>
+#include <unistd.h>
+#include <signal.h>
+
+#include <sys/types.h>
+#include <sys/ipc.h>
+#include <sys/msg.h>
+
+#include "basic_types.h"
 
 using namespace std;
 
 class SendProt {
 public:
-	SendProt () {};
-	virtual int send_msg (MSG_TYPE msg);
+	SendProt ();
+	~SendProt ();
+	virtual int sendMsg (MSG_TYPE *msg, int *rnext) = 0;
+	virtual int recvMsg (MSG_TYPE *msg, int *rnext) = 0;
+protected:
+	int inputChannelId;
+	int outputChannelId;
 };
 
 class StopNWait: public SendProt {
 public:
-	StopNWait ();
-};
-
-class SlidingWindow: public SendProt {
-public:
-	SlidingWindow();
+	StopNWait () : SendProt() {};
+	~StopNWait () {};
+	int sendMsg (MSG_TYPE *msg, int *rnext);
+	int recvMsg (MSG_TYPE *msg, int *rnext);
 };
 
 #endif
