@@ -46,8 +46,10 @@ int StopNWait::sendMsg (MSG_TYPE msg, ACK_TYPE *slast) {
 	cout << "msg + slast: " << msg_temp.msg << endl;
 
 	// apply theoretical error and CRC
-	msg_temp.msg = msg_temp.msg << CRC_SIZE ;
-	msg_temp.msg += crc(msg, GENERATOR);
+	msg_temp.msg = msg_temp.msg << CRC_SIZE;
+	cout << "gen = " << CRC_GEN_POL << " crc: " << crc(msg_temp.msg) << endl;
+	msg_temp.msg += crc(msg_temp.msg);
+	cout << "msg + slast + crc: " << msg_temp.msg << endl;
 	msg_temp.msg = apply_error(msg_temp.msg);
 
 	// send the package to the transmition mean buffer
@@ -69,7 +71,7 @@ int StopNWait::sendMsg (MSG_TYPE msg, ACK_TYPE *slast) {
 	// treat the result of an ack
 	if (alarm(0) > 0) {
 		// crc on the ack
-		if (crc(ack.ack, GENERATOR) != 0)
+		if (crc(ack.ack) != 0)
 			cout << "Acknowledge failed on CRC check" << endl;
 		// extract slast from the ack and check it
 		else if (EXTRACT_RNEXT(ack.ack) != rnext)
@@ -103,10 +105,11 @@ int StopNWait::recvMsg (MSG_TYPE *msg, ACK_TYPE *rnext) {
 		exit(1);
 	}
 
-	cout << "Received message: " << msg_temp.msg << endl;
+	cout << "Received message: " << msg_temp.msg << endl
+	<< "crc: " << crc(msg_temp.msg) << endl;
 
 	// CRC check
-	if (crc(msg_temp.msg, GENERATOR) != 0) {
+	if (crc(msg_temp.msg) != 0) {
 		// discart package
 		cout << "Error during transmition...Exiting..." << endl;
 	}
@@ -144,58 +147,48 @@ int StopNWait::recvMsg (MSG_TYPE *msg, ACK_TYPE *rnext) {
 
 void alarm_dummy (int dummy) {}
 
-MSG_TYPE crc (MSG_TYPE package, MSG_TYPE gen) {
+MSG_TYPE crc (MSG_TYPE package) {
 
-        long int gen_temp;
-        long int rem;
-        long int checker;
+	MSG_TYPE gen_temp;
+	MSG_TYPE rem;
+	MSG_TYPE checker;
 
-        gen_temp = gen << (PACKAGE_SIZE - REDUNDANCY - 1);
-        rem = package ^ gen_temp;
-        checker = pow(2,PACKAGE_SIZE-1);
-        while (gen_temp > gen) {
-                gen_temp = gen_temp >> 1;
-                checker = checker >> 1;
-                if (rem >= checker)
-                        rem = rem ^ gen_temp;
-        }
+	gen_temp = CRC_GEN_POL << (FULL_PACK_SIZE - CRC_SIZE - 1);
+	cout << "gen_temp: " << gen_temp << endl;
+	rem = package;
+	checker = 1 << (FULL_PACK_SIZE-1);
+	cout << "checker: " << checker << endl;
+	while (gen_temp > CRC_GEN_POL) {
+		if (rem >= checker)
+			rem = rem ^ gen_temp;
+		gen_temp = gen_temp >> 1;
+		checker = checker >> 1;
+	}
 
-        return rem;
+	return rem;
 }
 
 MSG_TYPE apply_error (MSG_TYPE package) {
 
-	long int i, j, w;
-	int r=0;
-	char buffer[PACKAGE_SIZE];
+	int i;
 	float error;
-	int set;
+	MSG_TYPE temp;
 	srand(RAND_SEED);
-	for (i=PACKAGE_SIZE-1;i>=0;i--) {
-                                    #ifdef PROB_ERROR
-                                    error = (((float)(rand()%100))/100);
-				    if (error <= PROB_ERROR)
-					set = 1;
-				    else
-					set = 0;
-				    cout << "Erro: " << error << endl;
-                                    #endif
-                                    #ifdef PROB_GIVEN
-                                    error = (rand()%100)>PROB_ERROR;
-                                    #endif
-                                    //printf("error: %d, packmod2: %d\n", error, package);
-                                    buffer[i] = (package%2 ^ set);
-                                    package = package >> 1;
-        }
-	
 
-	for(i=0,j=PACKAGE_SIZE-1;i<PACKAGE_SIZE;i++,j--) {
-		w = pow(2, i);
-	        r+=(buffer[j])*w;
+	for (i=FULL_PACK_SIZE-1;i>=0;i--) {
+		
+		error = (((float)(rand()%100))/100);
+		if (error <= PROB_ERROR) {
+			// get the current bit mask
+			temp = 0x1 << i;
+
+			// inverted the current bit
+			package = package ^ temp;
+		}
+			
+		//cout << "Erro: " << error << endl;
 	}
 
-	return r;
-
-
+	return package;
 }
 

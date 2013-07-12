@@ -40,7 +40,7 @@ public:
 	int recvMsg (MSG_TYPE *msg, ACK_TYPE *rnext);
 };
 
-MSG_TYPE crc (MSG_TYPE package, MSG_TYPE gen);
+MSG_TYPE crc (MSG_TYPE package);
 
 MSG_TYPE apply_error (MSG_TYPE);
 
