@@ -1,4 +1,15 @@
 #include "trans_protocols.h"
+#include <math.h>
+
+#define PACKAGE_SIZE 32
+#define REDUNDANCY 3
+#define BW 200
+#define FREQUENCY 10000
+#define SNR 500
+
+long int crc (long int package, long int gen);
+
+double error ();
 
 void alarm_dummy (int dummy);
 
@@ -143,3 +154,38 @@ int StopNWait::recvMsg (MSG_TYPE *msg, ACK_TYPE *rnext) {
 }
 
 void alarm_dummy (int dummy) {}
+
+long int crc (long int package, long int gen) {
+
+        long int gen_temp;
+        long int rem;
+        long int checker;
+
+        gen_temp = gen << (PACKAGE_SIZE - REDUNDANCY - 1);
+        rem = package ^ gen_temp;
+        checker = pow(2,PACKAGE_SIZE-1);
+        while (gen_temp > gen) {
+                gen_temp = gen_temp >> 1;
+                checker = checker >> 1;
+                if (rem >= checker)
+                        rem = rem ^ gen_temp;
+        }
+
+        return rem;
+}
+
+double error () {
+
+        // first calculate Es/N0 (energy per symbol to noise power spectral density)
+        double EsN0;
+        EsN0 = (double)SNR*BW/FREQUENCY;
+        EsN0 = sqrt(EsN0);
+
+        // than calculate the gaussian error function of Es/N0
+        double t = 1/(1+0.3275911*EsN0);
+        double errf = ((t*(0.254829592+t*(-0.284496736+t*(1.421413741+t*(-1.453152027 + t*1.061405429)))))*exp(-EsN0*EsN0));
+        //printf("EsN0: %f, t: %f, erf: %f\n", EsN0, t, errf);
+        return errf / 2;
+
+}
+
