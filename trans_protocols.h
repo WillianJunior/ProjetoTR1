@@ -2,6 +2,7 @@
 #define TRANS_PROTOCOLS_H
 
 #include <iostream>
+#include <stdio.h>
 #include <math.h>
 
 #include <stdlib.h>
@@ -39,9 +40,9 @@ public:
 	int recvMsg (MSG_TYPE *msg, ACK_TYPE *rnext);
 };
 
-long int crc (long int package, long int gen);
+MSG_TYPE crc (MSG_TYPE package, MSG_TYPE gen);
 
-unsigned int apply_error (unsigned int);
+MSG_TYPE apply_error (MSG_TYPE);
 
 
 #endif

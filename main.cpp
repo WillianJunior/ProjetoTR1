@@ -8,9 +8,6 @@ using namespace std;
 
 int main () {
 	
-	unsigned int x = apply_error(101000);
-	cout << "x: " << x << endl;
-
 	SendProt *sender;
 	int protocol;
 	MSG_TYPE teste[3] = {1,2,3};

@@ -17,6 +17,17 @@
 #define EXTRACT_RNEXT(A) A >> CRC_SIZE
 #define EXTRACT_MSG(A) A >> (CRC_SIZE + SLAST_SIZE)
 
+#define RAND_SEED time(NULL)
+
+#define PACKAGE_SIZE 32
+#define REDUNDANCY 3
+#define BW 200
+#define FREQUENCY 10000
+#define SNR 500
+
+#define PROB_ERROR 0.0000000000001
+#define GENERATOR 7
+
 enum protocols_options {  
 	STOPNWAIT = 1,
 	SLIDINGWINDOW = 2,

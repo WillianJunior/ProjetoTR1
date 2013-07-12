@@ -1,14 +1,5 @@
 #include "trans_protocols.h"
 
-#define PACKAGE_SIZE 32
-#define REDUNDANCY 3
-#define BW 200
-#define FREQUENCY 10000
-#define SNR 500
-
-#define PROB_ERROR 0.1
-
-
 void alarm_dummy (int dummy);
 
 SendProt::SendProt () {
@@ -49,13 +40,16 @@ int StopNWait::sendMsg (MSG_TYPE msg, ACK_TYPE *slast) {
 	signal(SIGALRM, alarm_dummy);
 
 	// append the slast
+	cout << "msg: " << msg << endl;
 	msg_temp.msg = msg << SLAST_SIZE;
 	msg_temp.msg += *slast;
+	cout << "msg + slast: " << msg_temp.msg << endl;
 
 	// apply theoretical error and CRC
-	// msg = error(msg ++ crc(msg))
-	msg_temp.msg = msg_temp.msg << CRC_SIZE; // simulation of crc
-		
+	msg_temp.msg = msg_temp.msg << CRC_SIZE ;
+	msg_temp.msg += crc(msg, GENERATOR);
+	msg_temp.msg = apply_error(msg_temp.msg);
+
 	// send the package to the transmition mean buffer
 	cout << "Sending message: " << msg_temp.msg << endl;
 	if (msgsnd(inputChannelId, &msg_temp, sizeof(msgbuff), 0) < 0) {
@@ -75,12 +69,10 @@ int StopNWait::sendMsg (MSG_TYPE msg, ACK_TYPE *slast) {
 	// treat the result of an ack
 	if (alarm(0) > 0) {
 		// crc on the ack
-		/*if (!crc(ack))
+		if (crc(ack.ack, GENERATOR) != 0)
 			cout << "Acknowledge failed on CRC check" << endl;
-		else if (EXTRACT_SLAST....*/
-
 		// extract slast from the ack and check it
-		if (EXTRACT_RNEXT(ack.ack) != rnext)
+		else if (EXTRACT_RNEXT(ack.ack) != rnext)
 			cout << "Received wrong acknowledge - expected " << rnext << " but instead " << (EXTRACT_RNEXT(ack.ack)) << endl;
 		else {
 			cout << "Received correct acknowledge" << endl;
@@ -111,16 +103,15 @@ int StopNWait::recvMsg (MSG_TYPE *msg, ACK_TYPE *rnext) {
 		exit(1);
 	}
 
-	// CRC check
-	/*if (!crc(msg)) {
-		// discart package
-		return false;
-	}*/
-
 	cout << "Received message: " << msg_temp.msg << endl;
 
+	// CRC check
+	if (crc(msg_temp.msg, GENERATOR) != 0) {
+		// discart package
+		cout << "Error during transmition...Exiting..." << endl;
+	}
 	// check the slast
-	if (*rnext == EXTRACT_SLAST(msg_temp.msg)) {
+	else if (*rnext == EXTRACT_SLAST(msg_temp.msg)) {
 		// if ok send updated rnext
 		cout << "Message received - Sending acknowledge" << endl;
 		*rnext = !(*rnext);
@@ -153,7 +144,7 @@ int StopNWait::recvMsg (MSG_TYPE *msg, ACK_TYPE *rnext) {
 
 void alarm_dummy (int dummy) {}
 
-long int crc (long int package, long int gen) {
+MSG_TYPE crc (MSG_TYPE package, MSG_TYPE gen) {
 
         long int gen_temp;
         long int rem;
@@ -172,14 +163,14 @@ long int crc (long int package, long int gen) {
         return rem;
 }
 
-unsigned int apply_error (unsigned int package) {
+MSG_TYPE apply_error (MSG_TYPE package) {
 
 	long int i, j, w;
 	int r=0;
 	char buffer[PACKAGE_SIZE];
 	float error;
 	int set;
-
+	srand(RAND_SEED);
 	for (i=PACKAGE_SIZE-1;i>=0;i--) {
                                     #ifdef PROB_ERROR
                                     error = (((float)(rand()%100))/100);
@@ -193,7 +184,7 @@ unsigned int apply_error (unsigned int package) {
                                     error = (rand()%100)>PROB_ERROR;
                                     #endif
                                     //printf("error: %d, packmod2: %d\n", error, package);
-                                    buffer[i] = (!(package%2 ^ set));
+                                    buffer[i] = (package%2 ^ set);
                                     package = package >> 1;
         }
 	
