@@ -71,7 +71,6 @@ int StopNWait::sendMsg (MSG_TYPE msg, ACK_TYPE *slast) {
 		else if (EXTRACT_SLAST....*/
 
 		// extract slast from the ack and check it
-		cout << "TESTER: ack = " << ack.ack << endl;
 		if (EXTRACT_RNEXT(ack.ack) != rnext)
 			cout << "Received wrong acknowledge - expected " << rnext << " but instead " << (EXTRACT_RNEXT(ack.ack)) << endl;
 		else {
@@ -98,9 +97,6 @@ int StopNWait::recvMsg (MSG_TYPE *msg, ACK_TYPE *rnext) {
 	// receive message from the transmition mean buffer
 	cout << "Waiting message..."<< endl;
 	
-	//cout << "TESTER: rnext = " << *rnext << endl;
-	//cout << "rnext address: " << rnext << " msg address: " << msg << " size reed: " << sizeof(MSG_TYPE) << endl;
-
 	if (msgrcv(inputChannelId, &msg_temp, sizeof(msgbuff), 0, 0) < 0) {
 		cout << "Error sending package through the msg queue: " << strerror(errno) << endl;
 		exit(1);
@@ -112,7 +108,7 @@ int StopNWait::recvMsg (MSG_TYPE *msg, ACK_TYPE *rnext) {
 		return false;
 	}*/
 
-	cout << "received = " << msg_temp.msg << endl;
+	cout << "Received message: " << msg_temp.msg << endl;
 
 	// check the slast
 	if (*rnext == EXTRACT_SLAST(msg_temp.msg)) {
@@ -122,11 +118,11 @@ int StopNWait::recvMsg (MSG_TYPE *msg, ACK_TYPE *rnext) {
 		ack.ack = *rnext;
 		// ack = ack ++ crc(ack)
 		ack.ack = ack.ack << CRC_SIZE; // simulation of crc
-		cout << "TESTER: ack = " << ack.ack << endl;
 		if (msgsnd(outputChannelId, &ack, sizeof(ACK_TYPE), 0) < 0) {
 			cout << "Error sending package through the msg queue: " << strerror(errno) << endl;
 			exit(1);
 		}
+		*msg = msg_temp.msg;
 
 		return true;
 	}

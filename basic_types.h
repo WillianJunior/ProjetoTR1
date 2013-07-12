@@ -3,7 +3,6 @@
 
 #define MSG_TYPE unsigned int
 #define ACK_TYPE unsigned int
-// why not working with int? dangling pointers?
 
 #define TIMEOUT 2
 
