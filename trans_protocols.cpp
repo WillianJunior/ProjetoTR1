@@ -1,5 +1,4 @@
 #include "trans_protocols.h"
-#include <math.h>
 
 #define PACKAGE_SIZE 32
 #define REDUNDANCY 3
@@ -7,9 +6,8 @@
 #define FREQUENCY 10000
 #define SNR 500
 
-long int crc (long int package, long int gen);
+#define PROB_ERROR 0.1
 
-double error ();
 
 void alarm_dummy (int dummy);
 
@@ -174,18 +172,39 @@ long int crc (long int package, long int gen) {
         return rem;
 }
 
-double error () {
+unsigned int apply_error (unsigned int package) {
 
-        // first calculate Es/N0 (energy per symbol to noise power spectral density)
-        double EsN0;
-        EsN0 = (double)SNR*BW/FREQUENCY;
-        EsN0 = sqrt(EsN0);
+	long int i, j, w;
+	int r=0;
+	char buffer[PACKAGE_SIZE];
+	float error;
+	int set;
 
-        // than calculate the gaussian error function of Es/N0
-        double t = 1/(1+0.3275911*EsN0);
-        double errf = ((t*(0.254829592+t*(-0.284496736+t*(1.421413741+t*(-1.453152027 + t*1.061405429)))))*exp(-EsN0*EsN0));
-        //printf("EsN0: %f, t: %f, erf: %f\n", EsN0, t, errf);
-        return errf / 2;
+	for (i=PACKAGE_SIZE-1;i>=0;i--) {
+                                    #ifdef PROB_ERROR
+                                    error = (((float)(rand()%100))/100);
+				    if (error <= PROB_ERROR)
+					set = 1;
+				    else
+					set = 0;
+				    cout << "Erro: " << error << endl;
+                                    #endif
+                                    #ifdef PROB_GIVEN
+                                    error = (rand()%100)>PROB_ERROR;
+                                    #endif
+                                    //printf("error: %d, packmod2: %d\n", error, package);
+                                    buffer[i] = (!(package%2 ^ set));
+                                    package = package >> 1;
+        }
+	
+
+	for(i=0,j=PACKAGE_SIZE-1;i<PACKAGE_SIZE;i++,j--) {
+		w = pow(2, i);
+	        r+=(buffer[j])*w;
+	}
+
+	return r;
+
 
 }
 
