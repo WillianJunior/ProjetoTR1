@@ -19,8 +19,8 @@
 
 #define RAND_SEED time(NULL)
 
-#define PROB_ERROR 0.0000000000001
-#define CRC_GEN_POL 0x7
+#define PROB_ERROR 0.01
+#define CRC_GEN_POL 15
 
 enum protocols_options {  
 	STOPNWAIT = 1,

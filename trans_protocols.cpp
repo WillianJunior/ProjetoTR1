@@ -40,17 +40,17 @@ int StopNWait::sendMsg (MSG_TYPE msg, ACK_TYPE *slast) {
 	signal(SIGALRM, alarm_dummy);
 
 	// append the slast
-	cout << "msg: " << msg << endl;
 	msg_temp.msg = msg << SLAST_SIZE;
 	msg_temp.msg += *slast;
-	cout << "msg + slast: " << msg_temp.msg << endl;
 
 	// apply theoretical error and CRC
 	msg_temp.msg = msg_temp.msg << CRC_SIZE;
-	cout << "gen = " << CRC_GEN_POL << " crc: " << crc(msg_temp.msg) << endl;
 	msg_temp.msg += crc(msg_temp.msg);
-	cout << "msg + slast + crc: " << msg_temp.msg << endl;
+	#ifdef AUTO_ERROR
 	msg_temp.msg = apply_error(msg_temp.msg);
+	#endif
+	#ifdef MANUAL_ERROR
+	#endif
 
 	// send the package to the transmition mean buffer
 	cout << "Sending message: " << msg_temp.msg << endl;
@@ -119,8 +119,9 @@ int StopNWait::recvMsg (MSG_TYPE *msg, ACK_TYPE *rnext) {
 		cout << "Message received - Sending acknowledge" << endl;
 		*rnext = !(*rnext);
 		ack.ack = *rnext;
-		// ack = ack ++ crc(ack)
-		ack.ack = ack.ack << CRC_SIZE; // simulation of crc
+		ack.ack = ack.ack << CRC_SIZE;
+		ack.ack += crc(ack.ack);
+		ack.ack = apply_error(ack.ack);
 		if (msgsnd(outputChannelId, &ack, sizeof(ACK_TYPE), 0) < 0) {
 			cout << "Error sending package through the msg queue: " << strerror(errno) << endl;
 			exit(1);
@@ -146,27 +147,6 @@ int StopNWait::recvMsg (MSG_TYPE *msg, ACK_TYPE *rnext) {
 }
 
 void alarm_dummy (int dummy) {}
-
-MSG_TYPE crc (MSG_TYPE package) {
-
-	MSG_TYPE gen_temp;
-	MSG_TYPE rem;
-	MSG_TYPE checker;
-
-	gen_temp = CRC_GEN_POL << (FULL_PACK_SIZE - CRC_SIZE - 1);
-	cout << "gen_temp: " << gen_temp << endl;
-	rem = package;
-	checker = 1 << (FULL_PACK_SIZE-1);
-	cout << "checker: " << checker << endl;
-	while (gen_temp > CRC_GEN_POL) {
-		if (rem >= checker)
-			rem = rem ^ gen_temp;
-		gen_temp = gen_temp >> 1;
-		checker = checker >> 1;
-	}
-
-	return rem;
-}
 
 MSG_TYPE apply_error (MSG_TYPE package) {
 

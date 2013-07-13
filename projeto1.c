@@ -2,7 +2,7 @@
 #include <string.h>
 #include <math.h>
 
-#define PACKAGE_SIZE 32
+#define PACKAGE_SIZE 10
 #define REDUNDANCY 3
 #define BW 200
 #define FREQUENCY 10000

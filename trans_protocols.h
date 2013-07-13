@@ -7,7 +7,7 @@
 
 #include <stdlib.h>
 
-#include <errno.h>
+#include <errno.h> 
 #include <string.h>
 #include <time.h>
 #include <unistd.h>
@@ -18,6 +18,10 @@
 #include <sys/msg.h>
 
 #include "basic_types.h"
+#include "util.h"
+
+//#define AUTO_ERROR
+#define MANUAL_ERROR
 
 using namespace std;
 
@@ -40,7 +44,7 @@ public:
 	int recvMsg (MSG_TYPE *msg, ACK_TYPE *rnext);
 };
 
-MSG_TYPE crc (MSG_TYPE package);
+//MSG_TYPE crc (MSG_TYPE package);
 
 MSG_TYPE apply_error (MSG_TYPE);
 
