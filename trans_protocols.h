@@ -20,10 +20,10 @@
 
 using namespace std;
 
-class SendProt {
+class TransProt {
 public:
-	SendProt ();
-	~SendProt ();
+	TransProt ();
+	~TransProt ();
 	virtual int sendMsg (MSG_TYPE msg, ACK_TYPE *slast) = 0;
 	virtual int recvMsg (MSG_TYPE *msg, ACK_TYPE *rnext) = 0;
 protected:
@@ -31,10 +31,20 @@ protected:
 	int outputChannelId;
 };
 
-class StopNWait: public SendProt {
+class StopNWait: public TransProt {
 public:
-	StopNWait () : SendProt() {};
+	StopNWait () : TransProt() {timeout = 0;};
 	~StopNWait () {};
+	int sendMsg (MSG_TYPE msg, ACK_TYPE *slast);
+	int recvMsg (MSG_TYPE *msg, ACK_TYPE *rnext);
+private:
+	int timeout;
+};
+
+class SlidingWindow : public TransProt {
+public:
+	SlidingWindow () : TransProt() {};
+	~SlidingWindow () {};
 	int sendMsg (MSG_TYPE msg, ACK_TYPE *slast);
 	int recvMsg (MSG_TYPE *msg, ACK_TYPE *rnext);
 };

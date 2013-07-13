@@ -8,7 +8,7 @@ using namespace std;
 
 int main () {
 	
-	SendProt *sender;
+	TransProt *sender = 0;
 	int protocol;
 	MSG_TYPE teste[3] = {1,2,3};
 	ACK_TYPE rnext = 0;
@@ -25,7 +25,8 @@ int main () {
 
 			case STOPNWAIT:
 				cout << "stopnwait" << endl << endl;
-				sender = new StopNWait();
+				if (sender == 0)
+					sender = new StopNWait();
 				sender->sendMsg(teste[0], &rnext);
 				break;
 

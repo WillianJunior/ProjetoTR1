@@ -3,7 +3,7 @@
 
 int main () {
 
-	SendProt *receiver;
+	TransProt *receiver;
 	receiver = new StopNWait();
 
 	MSG_TYPE msg;

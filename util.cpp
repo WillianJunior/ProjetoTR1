@@ -1,7 +1,7 @@
 #include "util.h"
 
-#include <iostream>
-using namespace std;
+//#include <iostream>
+//using namespace std;
 
 MSG_TYPE crc (MSG_TYPE package) {
 
@@ -39,7 +39,7 @@ MSG_TYPE apply_error (MSG_TYPE package, float prob_error) {
   MSG_TYPE temp;
   srand(RAND_SEED);
 
-  cout << "[ApplyError] Error chance: " << prob_error << endl;
+  //cout << "[ApplyError] Error chance: " << prob_error << endl;
 
   for (i=FULL_PACK_SIZE-1;i>=0;i--) {
     
