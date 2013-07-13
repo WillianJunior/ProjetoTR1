@@ -36,8 +36,12 @@ int StopNWait::sendMsg (MSG_TYPE msg, ACK_TYPE *slast) {
 	ackbuff ack;
 	msgbuff msg_temp;
 	ACK_TYPE rnext = !(*slast);
+	float prob_error;
 
 	signal(SIGALRM, alarm_dummy);
+
+	ack.mtype = 1;
+	msg_temp.mtype = 1;
 
 	// append the slast
 	msg_temp.msg = msg << SLAST_SIZE;
@@ -46,10 +50,14 @@ int StopNWait::sendMsg (MSG_TYPE msg, ACK_TYPE *slast) {
 	// apply theoretical error and CRC
 	msg_temp.msg = msg_temp.msg << CRC_SIZE;
 	msg_temp.msg += crc(msg_temp.msg);
+
 	#ifdef AUTO_ERROR
-	msg_temp.msg = apply_error(msg_temp.msg);
+	msg_temp.msg = apply_error(msg_temp.msg, PROB_ERROR);
 	#endif
 	#ifdef MANUAL_ERROR
+	cout << "Error chance (0-1): ";
+	cin >> prob_error;
+	msg_temp.msg = apply_error(msg_temp.msg, prob_error);
 	#endif
 
 	// send the package to the transmition mean buffer
@@ -96,6 +104,10 @@ int StopNWait::recvMsg (MSG_TYPE *msg, ACK_TYPE *rnext) {
 
 	ackbuff ack;
 	msgbuff msg_temp;
+	float prob_error;
+
+	ack.mtype = 1;
+	msg_temp.mtype = 1;
 
 	// receive message from the transmition mean buffer
 	cout << "Waiting message..."<< endl;
@@ -121,7 +133,15 @@ int StopNWait::recvMsg (MSG_TYPE *msg, ACK_TYPE *rnext) {
 		ack.ack = *rnext;
 		ack.ack = ack.ack << CRC_SIZE;
 		ack.ack += crc(ack.ack);
-		ack.ack = apply_error(ack.ack);
+		#ifdef AUTO_ERROR
+		ack.ack = apply_error(ack.ack, PROB_ERROR);
+		#endif
+		#ifdef MANUAL_ERROR
+		cout << "Error chance (0-1): ";
+		cin >> prob_error;
+		ack.ack = apply_error(ack.ack, prob_error);
+		#endif
+
 		if (msgsnd(outputChannelId, &ack, sizeof(ACK_TYPE), 0) < 0) {
 			cout << "Error sending package through the msg queue: " << strerror(errno) << endl;
 			exit(1);
@@ -147,28 +167,3 @@ int StopNWait::recvMsg (MSG_TYPE *msg, ACK_TYPE *rnext) {
 }
 
 void alarm_dummy (int dummy) {}
-
-MSG_TYPE apply_error (MSG_TYPE package) {
-
-	int i;
-	float error;
-	MSG_TYPE temp;
-	srand(RAND_SEED);
-
-	for (i=FULL_PACK_SIZE-1;i>=0;i--) {
-		
-		error = (((float)(rand()%100))/100);
-		if (error <= PROB_ERROR) {
-			// get the current bit mask
-			temp = 0x1 << i;
-
-			// inverted the current bit
-			package = package ^ temp;
-		}
-			
-		//cout << "Erro: " << error << endl;
-	}
-
-	return package;
-}
-

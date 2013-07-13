@@ -5,8 +5,6 @@
 #include <stdio.h>
 #include <math.h>
 
-#include <stdlib.h>
-
 #include <errno.h> 
 #include <string.h>
 #include <time.h>
@@ -19,9 +17,6 @@
 
 #include "basic_types.h"
 #include "util.h"
-
-//#define AUTO_ERROR
-#define MANUAL_ERROR
 
 using namespace std;
 
@@ -43,10 +38,5 @@ public:
 	int sendMsg (MSG_TYPE msg, ACK_TYPE *slast);
 	int recvMsg (MSG_TYPE *msg, ACK_TYPE *rnext);
 };
-
-//MSG_TYPE crc (MSG_TYPE package);
-
-MSG_TYPE apply_error (MSG_TYPE);
-
 
 #endif

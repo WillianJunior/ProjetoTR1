@@ -4,7 +4,7 @@
 #define MSG_TYPE unsigned int
 #define ACK_TYPE unsigned int
 
-#define TIMEOUT 2
+#define TIMEOUT 5
 
 #define FULL_PACK_SIZE 32
 #define SLAST_SIZE 1
@@ -21,6 +21,9 @@
 
 #define PROB_ERROR 0.01
 #define CRC_GEN_POL 15
+
+#define MANUAL_ERROR
+//#define AUTO_ERROR
 
 enum protocols_options {  
 	STOPNWAIT = 1,

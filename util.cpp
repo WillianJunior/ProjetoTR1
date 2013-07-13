@@ -1,7 +1,7 @@
 #include "util.h"
 
-//#include <iostream>
-//using namespace std;
+#include <iostream>
+using namespace std;
 
 MSG_TYPE crc (MSG_TYPE package) {
 
@@ -27,6 +27,32 @@ MSG_TYPE crc (MSG_TYPE package) {
       package ^= gen;
     gen >>= 1;
     checker >>= 1;
+  }
+
+  return package;
+}
+
+MSG_TYPE apply_error (MSG_TYPE package, float prob_error) {
+
+  int i;
+  float error;
+  MSG_TYPE temp;
+  srand(RAND_SEED);
+
+  cout << "[ApplyError] Error chance: " << prob_error << endl;
+
+  for (i=FULL_PACK_SIZE-1;i>=0;i--) {
+    
+    error = (((float)(rand()%100))/100);
+    if (error < prob_error) {
+      // get the current bit mask
+      temp = 0x1 << i;
+
+      // inverted the current bit
+      package = package ^ temp;
+    }
+      
+    //cout << "Erro: " << error << endl;
   }
 
   return package;
