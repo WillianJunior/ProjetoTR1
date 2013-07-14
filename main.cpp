@@ -5,14 +5,12 @@
 
 using namespace std;
 
-int stream[10] = {1,2,3,4,5,6,7,8,9,10};
+MSG_TYPE stream[10] = {1,2,3,4,5,6,7,8,9,10};
 
 int main () {
 	
 	TransProt *sender = 0;
 	int protocol;
-	MSG_TYPE teste[3] = {1,2,3};
-	ACK_TYPE rnext = 0;
 
 	while (1) {
 		cout << endl << "Select your protocol:" << endl
@@ -28,10 +26,7 @@ int main () {
 				cout << "stopnwait" << endl << endl;
 				if (sender == 0)
 					sender = new StopNWait();
-				for (int i=0; i<10; i++) {
-					if (!sender->sendMsg(stream[i], &rnext))
-						i--;
-				}
+				sender->sendMsgStream(stream, 10);
 				break;
 
 			case SLIDINGWINDOW:

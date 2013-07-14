@@ -24,9 +24,11 @@ class TransProt {
 public:
 	TransProt ();
 	~TransProt ();
+	virtual int sendMsgStream (MSG_TYPE *stream, int size) = 0;
+	virtual int recvMsgStream (MSG_TYPE *stream, int size) = 0;
+protected:
 	virtual int sendMsg (MSG_TYPE msg, ACK_TYPE *slast) = 0;
 	virtual int recvMsg (MSG_TYPE *msg, ACK_TYPE *rnext) = 0;
-protected:
 	int inputChannelId;
 	int outputChannelId;
 };
@@ -35,9 +37,11 @@ class StopNWait: public TransProt {
 public:
 	StopNWait () : TransProt() {timeout = 0;};
 	~StopNWait () {};
+	int sendMsgStream (MSG_TYPE *stream, int size);
+	int recvMsgStream (MSG_TYPE *stream, int size);
+private:
 	int sendMsg (MSG_TYPE msg, ACK_TYPE *slast);
 	int recvMsg (MSG_TYPE *msg, ACK_TYPE *rnext);
-private:
 	int timeout;
 };
 
@@ -45,6 +49,9 @@ class SlidingWindow : public TransProt {
 public:
 	SlidingWindow () : TransProt() {};
 	~SlidingWindow () {};
+	int sendMsgStream (MSG_TYPE *stream, int size);
+	int recvMsgStream (MSG_TYPE *stream, int size);
+protected:
 	int sendMsg (MSG_TYPE msg, ACK_TYPE *slast);
 	int recvMsg (MSG_TYPE *msg, ACK_TYPE *rnext);
 };

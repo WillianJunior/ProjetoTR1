@@ -2,14 +2,41 @@
 
 void alarm_dummy (int dummy) {};
 
+int StopNWait::sendMsgStream (MSG_TYPE *stream, int size) {
+	
+	ACK_TYPE slast = 0;
+
+	for (int i=0; i<size; i++) {
+		if (!sendMsg(stream[i], &slast))
+			i--;
+	}
+
+	return 0;
+}
+
+int StopNWait::recvMsgStream (MSG_TYPE *stream, int size) {
+
+	ACK_TYPE rnext = 0;
+
+	for (int i=0; i<size; i++) {
+		if (!recvMsg(&stream[i], &rnext))
+			i--;
+	}
+
+	return 0;
+
+}
+
 int StopNWait::sendMsg (MSG_TYPE msg, ACK_TYPE *slast) {
 
 	ackbuff ack;
 	msgbuff msg_temp;
 	ACK_TYPE rnext = !(*slast);
-	float prob_error;
-	int ack_number;
 	struct msqid_ds msg_info;
+	
+	#ifdef MANUAL_ERROR
+	float prob_error;
+	#endif
 
 	signal(SIGALRM, alarm_dummy);
 
@@ -92,7 +119,10 @@ int StopNWait::recvMsg (MSG_TYPE *msg, ACK_TYPE *rnext) {
 
 	ackbuff ack;
 	msgbuff msg_temp;
+	
+	#ifdef MANUAL_ERROR
 	float prob_error;
+	#endif
 
 	ack.mtype = 1;
 	msg_temp.mtype = 1;
@@ -134,7 +164,7 @@ int StopNWait::recvMsg (MSG_TYPE *msg, ACK_TYPE *rnext) {
 			cout << "Error sending package through the msg queue: " << strerror(errno) << endl;
 			exit(1);
 		}
-		*msg = msg_temp.msg;
+		*msg = EXTRACT_MSG(msg_temp.msg);
 
 		return true;
 	}

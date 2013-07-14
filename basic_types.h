@@ -19,7 +19,7 @@
 
 #define RAND_SEED time(NULL)
 
-#define PROB_ERROR 0.005
+#define PROB_ERROR 0.01
 #define CRC_GEN_POL 15
 
 //#define MANUAL_ERROR
