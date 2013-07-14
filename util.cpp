@@ -43,7 +43,7 @@ MSG_TYPE apply_error (MSG_TYPE package, float prob_error) {
 
   for (i=FULL_PACK_SIZE-1;i>=0;i--) {
     
-    error = (((float)(rand()%100))/100);
+    error = (((float)(rand()%10000))/10000);
     if (error < prob_error) {
       // get the current bit mask
       temp = 0x1 << i;

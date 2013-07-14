@@ -5,6 +5,7 @@
 
 using namespace std;
 
+int stream[10] = {1,2,3,4,5,6,7,8,9,10};
 
 int main () {
 	
@@ -27,7 +28,10 @@ int main () {
 				cout << "stopnwait" << endl << endl;
 				if (sender == 0)
 					sender = new StopNWait();
-				sender->sendMsg(teste[0], &rnext);
+				for (int i=0; i<10; i++) {
+					if (!sender->sendMsg(stream[i], &rnext))
+						i--;
+				}
 				break;
 
 			case SLIDINGWINDOW:

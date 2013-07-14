@@ -8,6 +8,8 @@ int StopNWait::sendMsg (MSG_TYPE msg, ACK_TYPE *slast) {
 	msgbuff msg_temp;
 	ACK_TYPE rnext = !(*slast);
 	float prob_error;
+	int ack_number;
+	struct msqid_ds msg_info;
 
 	signal(SIGALRM, alarm_dummy);
 
@@ -39,13 +41,16 @@ int StopNWait::sendMsg (MSG_TYPE msg, ACK_TYPE *slast) {
 	}
 
 	// clean the ack buffer, if filled with old ack's
-	while (timeout > 0) {
-		if (msgrcv(outputChannelId, &ack, sizeof(ackbuff), 0, 0) < 0) {
-			cout << "Message Queue error: " << strerror(errno) << endl;
-			exit(1);
+	if (timeout > 0) {
+		msgctl(outputChannelId, IPC_STAT, &msg_info);
+		if (msg_info.msg_qnum > 0) {
+			cout << "ack flushed: " << ack.ack << " - number or msgs: " << msg_info.msg_qnum << endl;
+			if (msgrcv(outputChannelId, &ack, sizeof(ackbuff), 0, 0) < 0) {
+				cout << "Message Queue error: " << strerror(errno) << endl;
+				exit(1);
+			}
 		}
-		cout << "ack flushed: " << ack.ack << " - timeout: " << timeout << endl;
-		timeout--;
+		timeout = 0;
 	}
 
 	// wait for the ack or the timeout
