@@ -8,7 +8,13 @@
 
 #define FULL_PACK_SIZE 32
 #define SLAST_SIZE 1
+#define WINDOW_SIZE 2
+
+#define PROB_ERROR 0.01
+#define CRC_GEN_POL 15
 #define CRC_SIZE 3
+
+#define RAND_SEED time(NULL)
 
 #define IN_MSGQ_KEY 0x1927
 #define OUT_MSGQ_KEY 0x1928
@@ -17,11 +23,6 @@
 #define EXTRACT_RNEXT(A) A >> CRC_SIZE
 #define EXTRACT_MSG(A) A >> (CRC_SIZE + SLAST_SIZE)
 
-#define RAND_SEED time(NULL)
-
-#define PROB_ERROR 0.01
-#define CRC_GEN_POL 15
-
 //#define MANUAL_ERROR
 #define AUTO_ERROR
 
@@ -29,6 +30,11 @@ enum protocols_options {
 	STOPNWAIT = 1,
 	SLIDINGWINDOW = 2,
 	EXIT = 9
+};
+
+enum ack_types {
+	ACK,
+	NACK
 };
 
 struct msgbuff {

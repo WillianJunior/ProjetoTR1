@@ -49,11 +49,25 @@ class SlidingWindow : public TransProt {
 public:
 	SlidingWindow () : TransProt() {};
 	~SlidingWindow () {};
-	int sendMsgStream (MSG_TYPE *stream, int size);
-	int recvMsgStream (MSG_TYPE *stream, int size);
+	virtual int sendMsgStream (MSG_TYPE *stream, int size) = 0;
+	virtual int recvMsgStream (MSG_TYPE *stream, int size) = 0;
 protected:
 	int sendMsg (MSG_TYPE msg, ACK_TYPE *slast);
 	int recvMsg (MSG_TYPE *msg, ACK_TYPE *rnext);
+};
+
+class GoBackN : public TransProt {
+public:
+	GoBackN () : TransProt() {};
+	~GoBackN () {};
+	int sendMsgStream (MSG_TYPE *stream, int size);
+	int recvMsgStream (MSG_TYPE *stream, int size);
+protected:
+	int sendMsg (MSG_TYPE msg, ACK_TYPE *slast);	// only send the message with the slast and crc, with possible error
+	int recvMsg (MSG_TYPE *msg, ACK_TYPE *rnext);	// receive the messages, check and send the ack
+private:
+	ackbuff acknowledge ();		// return the last ack or nack from the buffer
+
 };
 
 #endif

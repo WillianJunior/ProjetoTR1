@@ -3,7 +3,7 @@
 
 int main () {
 
-	TransProt *receiver;
+	TransProt *receiver = 0;
 	MSG_TYPE stream[10];
 	int protocol;
 	
@@ -21,13 +21,15 @@ int main () {
 
 			case STOPNWAIT:
 				cout << "stopnwait" << endl << endl;
-				if (receiver == 0)
-					receiver = new StopNWait();
+				receiver = new StopNWait();
 				receiver->recvMsgStream(stream, 10);
 				cout << "Stream: " << endl;
+
 				for (int i=0; i<10; i++) {
 					cout << "stream[" << i << "] = " << stream[i] << endl;
 				}
+
+				delete receiver;
 				break;
 
 			case SLIDINGWINDOW:
@@ -36,7 +38,6 @@ int main () {
 
 			case EXIT:
 				cout << "Bye" << endl << endl;
-				delete receiver;
 				return 0;
 
 			default:

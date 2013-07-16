@@ -24,9 +24,9 @@ int main () {
 
 			case STOPNWAIT:
 				cout << "stopnwait" << endl << endl;
-				if (sender == 0)
-					sender = new StopNWait();
+				sender = new StopNWait();
 				sender->sendMsgStream(stream, 10);
+				delete sender;
 				break;
 
 			case SLIDINGWINDOW:
@@ -35,7 +35,6 @@ int main () {
 
 			case EXIT:
 				cout << "Bye" << endl << endl;
-				delete sender;
 				return 0;
 
 			default:
