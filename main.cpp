@@ -15,7 +15,7 @@ int main () {
 	while (1) {
 		cout << endl << "Select your protocol:" << endl
 		<< "1 - Stop and Wait" << endl
-		<< "2 - Sliding Window" << endl
+		<< "2 - Go Back N" << endl
 		<< "9 - Exit" << endl << endl;
 
 		cin >> protocol;
@@ -29,8 +29,11 @@ int main () {
 				delete sender;
 				break;
 
-			case SLIDINGWINDOW:
-				cout << "sliding window" << endl << endl;
+			case GOBACKN:
+				cout << "go back n" << endl << endl;
+				sender = new GoBackN();
+				sender->sendMsgStream(stream, 10);
+				delete sender;
 				break;
 
 			case EXIT:

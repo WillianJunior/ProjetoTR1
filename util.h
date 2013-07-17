@@ -11,4 +11,6 @@ MSG_TYPE crc (MSG_TYPE package);
 
 MSG_TYPE apply_error (MSG_TYPE package, float prob_error);
 
+void alarm_dummy (int dummy);
+
 #endif

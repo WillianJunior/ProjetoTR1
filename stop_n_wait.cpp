@@ -1,7 +1,5 @@
 #include "trans_protocols.h"
 
-void alarm_dummy (int dummy) {};
-
 int StopNWait::sendMsgStream (MSG_TYPE *stream, int size) {
 	
 	ACK_TYPE slast = 0;
@@ -68,7 +66,7 @@ int StopNWait::sendMsg (MSG_TYPE msg, ACK_TYPE *slast) {
 	}
 
 	// clean the ack buffer, if filled with old ack's
-	if (timeout > 0) {
+	if (timeout_count > 0) {
 		msgctl(outputChannelId, IPC_STAT, &msg_info);
 		if (msg_info.msg_qnum > 0) {
 			cout << "ack flushed: " << ack.ack << " - number or msgs: " << msg_info.msg_qnum << endl;
@@ -77,7 +75,7 @@ int StopNWait::sendMsg (MSG_TYPE msg, ACK_TYPE *slast) {
 				exit(1);
 			}
 		}
-		timeout = 0;
+		timeout_count = 0;
 	}
 
 	// wait for the ack or the timeout
@@ -108,7 +106,7 @@ int StopNWait::sendMsg (MSG_TYPE msg, ACK_TYPE *slast) {
 	// treat the result of a timeout
 	else {
 		cout << "Timeout!" << endl;
-		timeout++;
+		timeout_count++;
 	}
 	
 	return false;

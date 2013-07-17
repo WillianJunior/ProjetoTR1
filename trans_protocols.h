@@ -29,23 +29,32 @@ public:
 protected:
 	virtual int sendMsg (MSG_TYPE msg, ACK_TYPE *slast) = 0;
 	virtual int recvMsg (MSG_TYPE *msg, ACK_TYPE *rnext) = 0;
+	
+	// buffers identifiers
 	int inputChannelId;
 	int outputChannelId;
+
+	// control variables
+	int timeout;
+	int slast_size;
+	int rnext_size;
+	float prob_error;
+
 };
 
 class StopNWait: public TransProt {
 public:
-	StopNWait () : TransProt() {timeout = 0;};
+	StopNWait () : TransProt() {timeout_count = 0;};
 	~StopNWait () {};
 	int sendMsgStream (MSG_TYPE *stream, int size);
 	int recvMsgStream (MSG_TYPE *stream, int size);
 private:
 	int sendMsg (MSG_TYPE msg, ACK_TYPE *slast);
 	int recvMsg (MSG_TYPE *msg, ACK_TYPE *rnext);
-	int timeout;
+	int timeout_count;
 };
 
-class SlidingWindow : public TransProt {
+/*class SlidingWindow : public TransProt {
 public:
 	SlidingWindow () : TransProt() {};
 	~SlidingWindow () {};
@@ -54,7 +63,7 @@ public:
 protected:
 	int sendMsg (MSG_TYPE msg, ACK_TYPE *slast);
 	int recvMsg (MSG_TYPE *msg, ACK_TYPE *rnext);
-};
+};*/
 
 class GoBackN : public TransProt {
 public:
@@ -62,11 +71,12 @@ public:
 	~GoBackN () {};
 	int sendMsgStream (MSG_TYPE *stream, int size);
 	int recvMsgStream (MSG_TYPE *stream, int size);
-protected:
+private:
 	int sendMsg (MSG_TYPE msg, ACK_TYPE *slast);	// only send the message with the slast and crc, with possible error
 	int recvMsg (MSG_TYPE *msg, ACK_TYPE *rnext);	// receive the messages, check and send the ack
-private:
 	ackbuff acknowledge ();		// return the last ack or nack from the buffer
+
+	int window;
 
 };
 

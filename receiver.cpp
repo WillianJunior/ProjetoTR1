@@ -12,7 +12,7 @@ int main () {
 	while (1) {
 		cout << endl << "Select your protocol:" << endl
 		<< "1 - Stop and Wait" << endl
-		<< "2 - Sliding Window" << endl
+		<< "2 - Go Back N" << endl
 		<< "9 - Exit" << endl << endl;
 
 		cin >> protocol;
@@ -23,8 +23,8 @@ int main () {
 				cout << "stopnwait" << endl << endl;
 				receiver = new StopNWait();
 				receiver->recvMsgStream(stream, 10);
+				
 				cout << "Stream: " << endl;
-
 				for (int i=0; i<10; i++) {
 					cout << "stream[" << i << "] = " << stream[i] << endl;
 				}
@@ -32,8 +32,17 @@ int main () {
 				delete receiver;
 				break;
 
-			case SLIDINGWINDOW:
-				cout << "sliding window" << endl << endl;
+			case GOBACKN:
+				cout << "go back n" << endl << endl;
+				receiver = new GoBackN();
+				receiver->recvMsgStream(stream, 10);
+
+				cout << "Stream: " << endl;
+				for (int i=0; i<10; i++) {
+					cout << "stream[" << i << "] = " << stream[i] << endl;
+				}
+
+				delete receiver;
 				break;
 
 			case EXIT:

@@ -6,6 +6,6 @@ clean:
 	-rm main
 	-rm receiver
 
-main: main.cpp trans_protocols.cpp stop_n_wait.cpp trans_protocols.h util.cpp util.h basic_types.h
-	g++ -Wall -g main.cpp trans_protocols.cpp stop_n_wait.cpp util.cpp -o main
-	g++ -Wall -g receiver.cpp trans_protocols.cpp stop_n_wait.cpp util.cpp -o receiver
+main: main.cpp trans_protocols.cpp stop_n_wait.cpp go_back_n.cpp trans_protocols.h util.cpp util.h basic_types.h
+	g++ -Wall -g main.cpp trans_protocols.cpp stop_n_wait.cpp go_back_n.cpp util.cpp -o main
+	g++ -Wall -g receiver.cpp trans_protocols.cpp stop_n_wait.cpp go_back_n.cpp util.cpp -o receiver

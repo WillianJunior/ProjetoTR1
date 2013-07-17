@@ -57,3 +57,5 @@ MSG_TYPE apply_error (MSG_TYPE package, float prob_error) {
 
   return package;
 }
+
+void alarm_dummy (int dummy) {};

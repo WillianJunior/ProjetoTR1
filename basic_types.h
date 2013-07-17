@@ -28,7 +28,7 @@
 
 enum protocols_options {  
 	STOPNWAIT = 1,
-	SLIDINGWINDOW = 2,
+	GOBACKN = 2,
 	EXIT = 9
 };
 
