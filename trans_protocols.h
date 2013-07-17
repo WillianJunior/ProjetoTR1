@@ -98,15 +98,16 @@ private:
 
 class SelectiveRepeat : public SendRecv {
 public:
-	SelectiveRepeat () : SendRecv() {};
+	SelectiveRepeat (int timeout, int slast_size, int rnext_size, float prob_error, int window);
 	~SelectiveRepeat () {};
 	int sendMsgStream (MSG_TYPE *stream, int size);
 	int recvMsgStream (MSG_TYPE *stream, int size);
 private:
-	ackbuff acknowledge ();		// return the last ack or nack from the buffer
+	int acknowledge (ackbuff *ack);		// return the last ack or nack from the buffer
 	ACK_TYPE nextRNext (ACK_TYPE rnext) {return ++rnext;};
 
 	int window;
+	int *receive_map;
 
 };
 

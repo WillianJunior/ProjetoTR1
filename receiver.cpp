@@ -44,7 +44,7 @@ int main () {
 
 			case SELECTIVEREPEAT:
 				cout << "selective repeat" << endl << endl;
-				receiver = new SelectiveRepeat();
+				receiver = new SelectiveRepeat(TIMEOUT, PACK_ID_SIZE, PACK_ID_SIZE, PROB_ERROR, WINDOW_SIZE);
 				receiver->recvMsgStream(stream, 10);
 
 				cout << "Stream: " << endl;

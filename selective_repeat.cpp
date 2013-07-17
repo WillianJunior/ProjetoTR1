@@ -1,12 +1,25 @@
 #include "trans_protocols.h"
 
-ackbuff SelectiveRepeat::acknowledge () {
+SelectiveRepeat::SelectiveRepeat (int timeout, int slast_size, int rnext_size, float prob_error, int window) : SendRecv(timeout, slast_size, rnext_size, prob_error) {
+	this->window = window;
+	receive_map = (int*) malloc(window * sizeof(int));
+}
+
+int SelectiveRepeat::acknowledge (ackbuff *ack) {
 	
-	ackbuff ack_temp;
+	//ackbuff ack_temp;
+	int ack_count = 0;
 
-	while (msgrcv(outputChannelId, &ack_temp, sizeof(ackbuff), 0, IPC_NOWAIT) >= 0);
+	while (msgrcv(outputChannelId, ack, sizeof(ackbuff), 0, IPC_NOWAIT) >= 0)
+		ack_count++;
 
-	return ack_temp;
+	if (ack_count == 0)
+		return false;
+
+	if (crc(ack->ack) != 0)
+			cout << "Acknowledge failed on CRC check" << endl;
+			
+	return true;
 }
 
 int SelectiveRepeat::sendMsgStream (MSG_TYPE *stream, int size) {
@@ -18,33 +31,38 @@ int SelectiveRepeat::sendMsgStream (MSG_TYPE *stream, int size) {
 	i = 0;
 
 	// 
-	while (i<(unsigned int)size) {
+	while (i<(ACK_TYPE)size) {
 		// set the window timeout
 		// alarm(TIMEOUT);
 
 		j = i;
 
 		// send a window
-		for (;j-i<WINDOW_SIZE; j++)
+		for (;j-i<WINDOW_SIZE && j<(ACK_TYPE)size; j++) {
+			cout << "Sending package " << j << endl;
 			sendMsg(stream[j], &j);
+		}
 
 		// wait for the transmition timeout
-		// pause();
+		sleep(timeout);
 
 		// if no ack or nack, poll, to check if the receiver is still there
-		/*if () {
-
+		if (!acknowledge(&ack)) {
+			cout << "No acks nor nacks received" << endl;
+		} else  {
+			cout << "Window closed. Checking the acks" << endl;
+			cout << "Ack received: " << (EXTRACT_RNEXT(ack.ack)) << endl;
+			if (EXTRACT_RNEXT(ack.ack) < j) {
+				cout << "Nack found: " << (EXTRACT_RNEXT(ack.ack)) << endl;
+				i = EXTRACT_RNEXT(ack.ack);
+			}
+			// ack only
+			else {
+				cout << "Setting next window" << endl;
+				i = j;
+			}
 		}
-		// if nack, rollback to the nack
-		else */
-		if ((ack = acknowledge()).ack <= j) {
-			i = ack.ack;
-		}
-		// ack only
-		else {
-			i = j + 1;
-		}
-	}	
+	}
 
 	return 0;
 }

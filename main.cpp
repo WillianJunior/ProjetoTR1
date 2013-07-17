@@ -37,7 +37,7 @@ int main () {
 
 			case SELECTIVEREPEAT:
 				cout << "selective repeat" << endl << endl;
-				sender = new SelectiveRepeat();
+				sender = new SelectiveRepeat(TIMEOUT, PACK_ID_SIZE, PACK_ID_SIZE, PROB_ERROR, WINDOW_SIZE);
 				sender->sendMsgStream(stream, 10);
 				break;
 
