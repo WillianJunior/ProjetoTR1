@@ -80,4 +80,19 @@ private:
 
 };
 
+class SelectiveRepeat : public TransProt {
+public:
+	SelectiveRepeat () : TransProt() {};
+	~SelectiveRepeat () {};
+	int sendMsgStream (MSG_TYPE *stream, int size);
+	int recvMsgStream (MSG_TYPE *stream, int size);
+private:
+	int sendMsg (MSG_TYPE msg, ACK_TYPE *slast);	// only send the message with the slast and crc, with possible error
+	int recvMsg (MSG_TYPE *msg, ACK_TYPE *rnext);	// receive the messages, check and send the ack
+
+	int window;
+
+};
+
+
 #endif

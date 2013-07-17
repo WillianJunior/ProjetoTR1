@@ -29,6 +29,7 @@
 enum protocols_options {  
 	STOPNWAIT = 1,
 	GOBACKN = 2,
+	SELECTIVEREPEAT = 3,
 	EXIT = 9
 };
 

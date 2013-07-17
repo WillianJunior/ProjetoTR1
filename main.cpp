@@ -16,6 +16,7 @@ int main () {
 		cout << endl << "Select your protocol:" << endl
 		<< "1 - Stop and Wait" << endl
 		<< "2 - Go Back N" << endl
+		<< "3 - Selective Repeat" << endl
 		<< "9 - Exit" << endl << endl;
 
 		cin >> protocol;
@@ -31,6 +32,13 @@ int main () {
 
 			case GOBACKN:
 				cout << "go back n" << endl << endl;
+				sender = new GoBackN();
+				sender->sendMsgStream(stream, 10);
+				delete sender;
+				break;
+
+			case SELECTIVEREPEAT:
+				cout << "selective repeat" << endl << endl;
 				sender = new GoBackN();
 				sender->sendMsgStream(stream, 10);
 				delete sender;
