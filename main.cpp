@@ -25,7 +25,7 @@ int main () {
 
 			case STOPNWAIT:
 				cout << "stopnwait" << endl << endl;
-				sender = new StopNWait();
+				sender = new StopNWait(TIMEOUT, 1, 1, PROB_ERROR);
 				sender->sendMsgStream(stream, 10);
 				delete sender;
 				break;

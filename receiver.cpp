@@ -6,8 +6,6 @@ int main () {
 	TransProt *receiver = 0;
 	MSG_TYPE stream[10];
 	int protocol;
-	
-	receiver = new StopNWait();
 
 	while (1) {
 		cout << endl << "Select your protocol:" << endl
@@ -22,7 +20,7 @@ int main () {
 
 			case STOPNWAIT:
 				cout << "stopnwait" << endl << endl;
-				receiver = new StopNWait();
+				receiver = new StopNWait(TIMEOUT, 1, 1, PROB_ERROR);
 				receiver->recvMsgStream(stream, 10);
 				
 				cout << "Stream: " << endl;

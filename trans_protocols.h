@@ -22,7 +22,8 @@ using namespace std;
 
 class TransProt {
 public:
-	TransProt ();
+	TransProt() {};
+	TransProt (int timeout, int slast_size, int rnext_size, float prob_error);
 	~TransProt ();
 	virtual int sendMsgStream (MSG_TYPE *stream, int size) = 0;
 	virtual int recvMsgStream (MSG_TYPE *stream, int size) = 0;
@@ -46,6 +47,7 @@ protected:
 class SendRecv : public TransProt {
 protected:
 	SendRecv () : TransProt() {};
+	SendRecv(int timeout, int slast_size, int rnext_size, float prob_error) : TransProt(timeout, slast_size, rnext_size, prob_error) {};
 	~SendRecv () {};
 	int sendMsg (MSG_TYPE msg, ACK_TYPE *slast);
 	int recvMsg (MSG_TYPE *msg, ACK_TYPE *rnext);
@@ -54,7 +56,7 @@ protected:
 
 class StopNWait: public SendRecv {
 public:
-	StopNWait () : SendRecv() {timeout_count = 0;};
+	StopNWait (int timeout, int slast_size, int rnext_size, float prob_error);
 	~StopNWait () {};
 	int sendMsgStream (MSG_TYPE *stream, int size);
 	int recvMsgStream (MSG_TYPE *stream, int size);
@@ -86,15 +88,14 @@ private:
 
 };
 
-class SelectiveRepeat : public TransProt {
+class SelectiveRepeat : public SendRecv {
 public:
-	SelectiveRepeat () : TransProt() {};
+	SelectiveRepeat () : SendRecv() {};
 	~SelectiveRepeat () {};
 	int sendMsgStream (MSG_TYPE *stream, int size);
 	int recvMsgStream (MSG_TYPE *stream, int size);
 private:
-	int sendMsg (MSG_TYPE msg, ACK_TYPE *slast);	// only send the message with the slast and crc, with possible error
-	int recvMsg (MSG_TYPE *msg, ACK_TYPE *rnext);	// receive the messages, check and send the ack
+	ackbuff acknowledge ();		// return the last ack or nack from the buffer
 
 	int window;
 

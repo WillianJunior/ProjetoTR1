@@ -1,5 +1,9 @@
 #include "trans_protocols.h"
 
+StopNWait::StopNWait (int timeout, int slast_size, int rnext_size, float prob_error): SendRecv(timeout, slast_size, rnext_size, prob_error) {
+	timeout_count = 0;
+}
+
 int StopNWait::sendMsgStream (MSG_TYPE *stream, int size) {
 	
 	ACK_TYPE slast = 0;
