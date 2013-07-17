@@ -55,12 +55,15 @@ protected:
 };
 
 class StopNWait: public SendRecv {
-public:
-	StopNWait (int timeout, int slast_size, int rnext_size, float prob_error);
+public:	
+	StopNWait (int timeout, float prob_error);
 	~StopNWait () {};
+protected:
 	int sendMsgStream (MSG_TYPE *stream, int size);
 	int recvMsgStream (MSG_TYPE *stream, int size);
 private:
+	int acknowledge (ackbuff *ack);
+
 	int timeout_count;
 };
 
@@ -77,7 +80,7 @@ protected:
 
 class GoBackN : public SendRecv {
 public:
-	GoBackN () : SendRecv() {};
+	GoBackN (int timeout, int slast_size, int rnext_size, float prob_error, int window);
 	~GoBackN () {};
 	int sendMsgStream (MSG_TYPE *stream, int size);
 	int recvMsgStream (MSG_TYPE *stream, int size);

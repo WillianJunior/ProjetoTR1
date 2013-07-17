@@ -20,7 +20,7 @@ int main () {
 
 			case STOPNWAIT:
 				cout << "stopnwait" << endl << endl;
-				receiver = new StopNWait(TIMEOUT, 1, 1, PROB_ERROR);
+				receiver = new StopNWait(TIMEOUT, PROB_ERROR);
 				receiver->recvMsgStream(stream, 10);
 				
 				cout << "Stream: " << endl;
@@ -33,7 +33,7 @@ int main () {
 
 			case GOBACKN:
 				cout << "go back n" << endl << endl;
-				receiver = new GoBackN();
+				receiver = new GoBackN(TIMEOUT, PACK_ID_SIZE, PACK_ID_SIZE, PROB_ERROR, WINDOW_SIZE);
 				receiver->recvMsgStream(stream, 10);
 
 				cout << "Stream: " << endl;
@@ -46,7 +46,7 @@ int main () {
 
 			case SELECTIVEREPEAT:
 				cout << "selective repeat" << endl << endl;
-				receiver = new GoBackN();
+				receiver = new SelectiveRepeat();
 				receiver->recvMsgStream(stream, 10);
 
 				cout << "Stream: " << endl;

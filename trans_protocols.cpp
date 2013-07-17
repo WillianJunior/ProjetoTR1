@@ -38,14 +38,8 @@ TransProt::~TransProt () {
 
 int SendRecv::sendMsg(MSG_TYPE msg, ACK_TYPE *slast) {
 
-	ackbuff ack;
 	msgbuff msg_temp;
-	ACK_TYPE rnext = !(*slast);
-	struct msqid_ds msg_info;
-
-	signal(SIGALRM, alarm_dummy);
-
-	ack.mtype = 1;
+	
 	msg_temp.mtype = 1;
 
 	// append the slast
@@ -57,9 +51,9 @@ int SendRecv::sendMsg(MSG_TYPE msg, ACK_TYPE *slast) {
 	msg_temp.msg += crc(msg_temp.msg);
 
 	#ifdef MANUAL_ERROR
+	#endif
 	cout << "Error chance (0-1): ";
 	cin >> prob_error;
-	#endif
 	msg_temp.msg = apply_error(msg_temp.msg, prob_error);
 
 	// send the package to the transmition mean buffer
@@ -69,51 +63,7 @@ int SendRecv::sendMsg(MSG_TYPE msg, ACK_TYPE *slast) {
 		exit(1);
 	}
 
-	// clean the ack buffer, if filled with old ack's
-	if (1) {//timeout > 0) {
-		msgctl(outputChannelId, IPC_STAT, &msg_info);
-		if (msg_info.msg_qnum > 0) {
-			cout << "ack flushed: " << ack.ack << " - number or msgs: " << msg_info.msg_qnum << endl;
-			if (msgrcv(outputChannelId, &ack, sizeof(ackbuff), 0, 0) < 0) {
-				cout << "Message Queue error: " << strerror(errno) << endl;
-				exit(1);
-			}
-		}
-		//timeout = 0;
-	}
-
-	// wait for the ack or the timeout
-	cout << "Waiting for the acknowledge" << endl;
-	alarm(timeout);
-	if (msgrcv(outputChannelId, &ack, sizeof(ackbuff), 0, 0) < 0)
-		if (errno != EINTR){
-			cout << "Message Queue error: " << strerror(errno) << endl;
-			exit(1);
-		}
-
-	cout << "ack received: " << ack.ack << endl;
-	// treat the result of an ack
-	if (alarm(0) > 0) {
-		// crc on the ack
-		if (crc(ack.ack) != 0)
-			cout << "Acknowledge failed on CRC check" << endl;
-		// extract slast from the ack and check it
-		else if (EXTRACT_RNEXT(ack.ack) != rnext)
-			cout << "Received wrong acknowledge - expected " << rnext << " but instead " << (EXTRACT_RNEXT(ack.ack)) << endl;
-		else {
-			cout << "Received correct acknowledge" << endl;
-			// update slast
-			*slast = rnext;
-			return true;
-		}
-	} 
-	// treat the result of a timeout
-	else {
-		cout << "Timeout!" << endl;
-		//timeout++;
-	}
-	
-	return false;
+	return true;
 
 }
 
@@ -129,7 +79,7 @@ int SendRecv::recvMsg (MSG_TYPE *msg, ACK_TYPE *rnext) {
 	cout << "Waiting message..."<< endl;
 	
 	if (msgrcv(inputChannelId, &msg_temp, sizeof(msgbuff), 0, 0) < 0) {
-		cout << "Error sending package through the msg queue: " << strerror(errno) << endl;
+		cout << "Error waiting package from the msg queue: " << strerror(errno) << endl;
 		exit(1);
 	}
 

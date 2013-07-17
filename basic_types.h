@@ -7,8 +7,8 @@
 #define TIMEOUT 2
 
 #define FULL_PACK_SIZE 32
-#define SLAST_SIZE 1
-#define WINDOW_SIZE 2
+#define PACK_ID_SIZE 4
+#define WINDOW_SIZE pow(2,PACK_ID_SIZE)
 
 #define PROB_ERROR 0.04
 #define CRC_GEN_POL 15

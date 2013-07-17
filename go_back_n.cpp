@@ -1,5 +1,9 @@
 #include "trans_protocols.h"
 
+GoBackN::GoBackN (int timeout, int slast_size, int rnext_size, float prob_error, int window): SendRecv(timeout, slast_size, rnext_size, prob_error) {
+	this->window = window;
+}
+
 ackbuff GoBackN::acknowledge () {
 	
 	ackbuff ack_temp;

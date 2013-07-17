@@ -25,21 +25,21 @@ int main () {
 
 			case STOPNWAIT:
 				cout << "stopnwait" << endl << endl;
-				sender = new StopNWait(TIMEOUT, 1, 1, PROB_ERROR);
+				sender = new StopNWait(TIMEOUT, PROB_ERROR);
 				sender->sendMsgStream(stream, 10);
 				delete sender;
 				break;
 
 			case GOBACKN:
 				cout << "go back n" << endl << endl;
-				sender = new GoBackN();
+				sender = new GoBackN(TIMEOUT, PACK_ID_SIZE, PACK_ID_SIZE, PROB_ERROR, WINDOW_SIZE);
 				sender->sendMsgStream(stream, 10);
 				delete sender;
 				break;
 
 			case SELECTIVEREPEAT:
 				cout << "selective repeat" << endl << endl;
-				sender = new GoBackN();
+				sender = new SelectiveRepeat();
 				sender->sendMsgStream(stream, 10);
 				delete sender;
 				break;
