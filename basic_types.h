@@ -41,6 +41,7 @@ struct msgbuff {
 
 struct ackbuff {
    long mtype;
+   ack_types type;
    ACK_TYPE ack;
 };
 

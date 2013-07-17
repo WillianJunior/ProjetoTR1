@@ -107,7 +107,7 @@ private:
 	ACK_TYPE nextRNext (ACK_TYPE rnext) {return ++rnext;};
 
 	int window;
-	int *receive_map;
+	ackbuff *current_window;
 
 };
 
