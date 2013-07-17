@@ -51,9 +51,9 @@ int SendRecv::sendMsg(MSG_TYPE msg, ACK_TYPE *slast) {
 	msg_temp.msg += crc(msg_temp.msg);
 
 	#ifdef MANUAL_ERROR
-	#endif
 	cout << "Error chance (0-1): ";
 	cin >> prob_error;
+	#endif
 	msg_temp.msg = apply_error(msg_temp.msg, prob_error);
 
 	// send the package to the transmition mean buffer

@@ -103,11 +103,12 @@ public:
 	int sendMsgStream (MSG_TYPE *stream, int size);
 	int recvMsgStream (MSG_TYPE *stream, int size);
 private:
-	int acknowledge (ackbuff *ack);		// return the last ack or nack from the buffer
+	int recvMsg (MSG_TYPE *msg, ACK_TYPE *rnext);
 	ACK_TYPE nextRNext (ACK_TYPE rnext) {return ++rnext;};
 
 	int window;
-	ackbuff *current_window;
+	ackbuff *current_window_snd;
+	msgbuff *current_window_rcv;
 
 };
 

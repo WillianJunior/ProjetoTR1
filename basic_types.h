@@ -11,7 +11,7 @@
 //#define WINDOW_SIZE pow(2,PACK_ID_SIZE)
 #define WINDOW_SIZE 5
 
-#define PROB_ERROR 0.004
+#define PROB_ERROR 0.00
 #define CRC_GEN_POL 15
 #define CRC_SIZE 3
 
@@ -36,6 +36,8 @@ enum ack_types {
 
 struct msgbuff {
    long mtype;
+   ACK_TYPE msg_num;
+   ack_types rcv_flag;
    MSG_TYPE msg;
 };
 
