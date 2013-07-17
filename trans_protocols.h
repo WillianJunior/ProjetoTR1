@@ -42,15 +42,23 @@ protected:
 
 };
 
-class StopNWait: public TransProt {
+
+class SendRecv : public TransProt {
+protected:
+	SendRecv () : TransProt() {};
+	~SendRecv () {};
+	int sendMsg (MSG_TYPE msg, ACK_TYPE *slast);
+	int recvMsg (MSG_TYPE *msg, ACK_TYPE *rnext);
+
+};
+
+class StopNWait: public SendRecv {
 public:
-	StopNWait () : TransProt() {timeout_count = 0;};
+	StopNWait () : SendRecv() {timeout_count = 0;};
 	~StopNWait () {};
 	int sendMsgStream (MSG_TYPE *stream, int size);
 	int recvMsgStream (MSG_TYPE *stream, int size);
 private:
-	int sendMsg (MSG_TYPE msg, ACK_TYPE *slast);
-	int recvMsg (MSG_TYPE *msg, ACK_TYPE *rnext);
 	int timeout_count;
 };
 
@@ -65,15 +73,13 @@ protected:
 	int recvMsg (MSG_TYPE *msg, ACK_TYPE *rnext);
 };*/
 
-class GoBackN : public TransProt {
+class GoBackN : public SendRecv {
 public:
-	GoBackN () : TransProt() {};
+	GoBackN () : SendRecv() {};
 	~GoBackN () {};
 	int sendMsgStream (MSG_TYPE *stream, int size);
 	int recvMsgStream (MSG_TYPE *stream, int size);
 private:
-	int sendMsg (MSG_TYPE msg, ACK_TYPE *slast);	// only send the message with the slast and crc, with possible error
-	int recvMsg (MSG_TYPE *msg, ACK_TYPE *rnext);	// receive the messages, check and send the ack
 	ackbuff acknowledge ();		// return the last ack or nack from the buffer
 
 	int window;
