@@ -49,8 +49,11 @@ protected:
 	SendRecv () : TransProt() {};
 	SendRecv(int timeout, int slast_size, int rnext_size, float prob_error) : TransProt(timeout, slast_size, rnext_size, prob_error) {};
 	~SendRecv () {};
+
 	int sendMsg (MSG_TYPE msg, ACK_TYPE *slast);
 	int recvMsg (MSG_TYPE *msg, ACK_TYPE *rnext);
+
+	virtual ACK_TYPE nextRNext (ACK_TYPE rnext) = 0;
 
 };
 
@@ -63,6 +66,7 @@ protected:
 	int recvMsgStream (MSG_TYPE *stream, int size);
 private:
 	int acknowledge (ackbuff *ack);
+	ACK_TYPE nextRNext (ACK_TYPE rnext) {return !(rnext);};
 
 	int timeout_count;
 };
@@ -85,7 +89,8 @@ public:
 	int sendMsgStream (MSG_TYPE *stream, int size);
 	int recvMsgStream (MSG_TYPE *stream, int size);
 private:
-	ackbuff acknowledge ();		// return the last ack or nack from the buffer
+	int acknowledge (ackbuff *ack);		// return the last ack or nack from the buffer
+	ACK_TYPE nextRNext (ACK_TYPE rnext) {return ++rnext;};
 
 	int window;
 
@@ -99,6 +104,7 @@ public:
 	int recvMsgStream (MSG_TYPE *stream, int size);
 private:
 	ackbuff acknowledge ();		// return the last ack or nack from the buffer
+	ACK_TYPE nextRNext (ACK_TYPE rnext) {return ++rnext;};
 
 	int window;
 

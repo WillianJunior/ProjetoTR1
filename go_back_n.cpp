@@ -4,13 +4,18 @@ GoBackN::GoBackN (int timeout, int slast_size, int rnext_size, float prob_error,
 	this->window = window;
 }
 
-ackbuff GoBackN::acknowledge () {
+int GoBackN::acknowledge (ackbuff *ack) {
 	
-	ackbuff ack_temp;
+	//ackbuff ack_temp;
 
-	while (msgrcv(outputChannelId, &ack_temp, sizeof(ackbuff), 0, IPC_NOWAIT) >= 0);
+	while (msgrcv(outputChannelId, ack, sizeof(ackbuff), 0, IPC_NOWAIT) >= 0);
 
-	return ack_temp;
+	if (crc(ack->ack) != 0)
+			cout << "Acknowledge failed on CRC check" << endl;
+		else
+			return true;
+
+	return false;
 }
 
 int GoBackN::sendMsgStream (MSG_TYPE *stream, int size) {
@@ -29,8 +34,10 @@ int GoBackN::sendMsgStream (MSG_TYPE *stream, int size) {
 		j = i;
 
 		// send a window
-		for (;j-i<WINDOW_SIZE; j++)
+		for (;j-i<WINDOW_SIZE && j<(unsigned int)size; j++) {
+			cout << "Sending package " << j << endl;
 			sendMsg(stream[j], &j);
+		}
 
 		// wait for the transmition timeout
 		// pause();
@@ -41,12 +48,18 @@ int GoBackN::sendMsgStream (MSG_TYPE *stream, int size) {
 		}
 		// if nack, rollback to the nack
 		else */
-		if ((ack = acknowledge()).ack <= j) {
-			i = ack.ack;
+		sleep(1);
+		cout << "Window closed. Checking the acks" << endl;
+		acknowledge(&ack);
+		cout << "Ack received: " << (EXTRACT_RNEXT(ack.ack)) << endl;
+		if (EXTRACT_RNEXT(ack.ack) < j) {
+			cout << "Nack found: " << (EXTRACT_RNEXT(ack.ack)) << endl;
+			i = EXTRACT_RNEXT(ack.ack);
 		}
 		// ack only
 		else {
-			i = j + 1;
+			cout << "Setting next window" << endl;
+			i = j;
 		}
 	}
 

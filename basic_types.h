@@ -8,9 +8,10 @@
 
 #define FULL_PACK_SIZE 32
 #define PACK_ID_SIZE 4
-#define WINDOW_SIZE pow(2,PACK_ID_SIZE)
+//#define WINDOW_SIZE pow(2,PACK_ID_SIZE)
+#define WINDOW_SIZE 5
 
-#define PROB_ERROR 0.04
+#define PROB_ERROR 0.004
 #define CRC_GEN_POL 15
 #define CRC_SIZE 3
 

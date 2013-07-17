@@ -94,12 +94,13 @@ int SendRecv::recvMsg (MSG_TYPE *msg, ACK_TYPE *rnext) {
 	// check the slast
 	else if (*rnext == EXTRACT_SLAST(msg_temp.msg, slast_size)) {
 		// if ok send updated rnext
-		cout << "Message received - Sending acknowledge" << endl;
-		*rnext = !(*rnext);
+		*rnext = nextRNext(*rnext);
 		ack.ack = *rnext;
 		ack.ack <<= CRC_SIZE;
 		ack.ack += crc(ack.ack);
 		
+		cout << "Message received - Sending acknowledge: " << (EXTRACT_RNEXT(ack.ack)) << endl;
+
 		#ifdef MANUAL_ERROR
 		cout << "Error chance (0-1): ";
 		cin >> prob_error;

@@ -28,7 +28,6 @@ int main () {
 					cout << "stream[" << i << "] = " << stream[i] << endl;
 				}
 
-				delete receiver;
 				break;
 
 			case GOBACKN:
@@ -41,7 +40,6 @@ int main () {
 					cout << "stream[" << i << "] = " << stream[i] << endl;
 				}
 
-				delete receiver;
 				break;
 
 			case SELECTIVEREPEAT:
@@ -54,11 +52,11 @@ int main () {
 					cout << "stream[" << i << "] = " << stream[i] << endl;
 				}
 
-				delete receiver;
 				break;
 
 			case EXIT:
 				cout << "Bye" << endl << endl;
+				delete receiver;
 				return 0;
 
 			default:

@@ -1,5 +1,5 @@
 # Build project.
-all: main
+all: main clean_ipc
 
 # Clean everything.
 clean: clean_ipc
