@@ -3,11 +3,13 @@
 
 #define MSG_TYPE unsigned int
 #define ACK_TYPE unsigned int
+#define ID_TYPE unsigned int
 
 #define TIMEOUT 2
 
 #define FULL_PACK_SIZE 32
 #define PACK_ID_SIZE 4
+#define ACK_TYPE_SIZE 1
 //#define WINDOW_SIZE pow(2,PACK_ID_SIZE)
 #define WINDOW_SIZE 5
 
@@ -34,17 +36,30 @@ enum ack_types {
 	NACK
 };
 
+// msgbuff package format:
+// payload | identifier | crc
 struct msgbuff {
    long mtype;
-   ACK_TYPE msg_num;
-   ack_types rcv_flag;
    MSG_TYPE msg;
 };
 
+// ackbuff package format:
+// ack type | identifier | crc
 struct ackbuff {
    long mtype;
-   ack_types type;
    ACK_TYPE ack;
+};
+
+struct msg_window {
+   ID_TYPE identifier;
+   ack_types ack_type;
+   MSG_TYPE payload; // deprecated
+};
+
+struct receiver_msgbuff {
+   ID_TYPE msg_num;
+   ack_types rcv_flag;
+   MSG_TYPE payload;
 };
 
 #endif

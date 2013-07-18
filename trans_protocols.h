@@ -37,8 +37,9 @@ protected:
 
 	// control variables
 	int timeout;
-	int slast_size;
-	int rnext_size;
+	ID_TYPE identifiers_size;
+	int slast_size;		// deprecated, use identifiers_size
+	int rnext_size;		// deprecated, use identifiers_size
 	float prob_error;
 
 };
@@ -98,7 +99,7 @@ private:
 
 class SelectiveRepeat : public SendRecv {
 public:
-	SelectiveRepeat (int timeout, int slast_size, int rnext_size, float prob_error, int window);
+	SelectiveRepeat (int timeout, ID_TYPE identifiers_size, float prob_error, int window);
 	~SelectiveRepeat () {};
 	int sendMsgStream (MSG_TYPE *stream, int size);
 	int recvMsgStream (MSG_TYPE *stream, int size);
@@ -106,9 +107,8 @@ private:
 	int recvMsg (MSG_TYPE *msg, ACK_TYPE *rnext);
 	ACK_TYPE nextRNext (ACK_TYPE rnext) {return ++rnext;};
 
-	int window;
-	ackbuff *current_window_snd;
-	msgbuff *current_window_rcv;
+	ID_TYPE window;
+	msg_window *current_window;
 
 };
 

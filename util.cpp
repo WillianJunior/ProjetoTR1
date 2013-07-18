@@ -1,7 +1,7 @@
 #include "util.h"
 
-//#include <iostream>
-//using namespace std;
+#include <iostream>
+using namespace std;
 
 MSG_TYPE crc (MSG_TYPE package) {
 
@@ -56,6 +56,10 @@ MSG_TYPE apply_error (MSG_TYPE package, float prob_error) {
   }
 
   return package;
+}
+
+void message_pretty_print (MSG_TYPE msg, ID_TYPE id_size) {
+  cout << "Message: " << (EXTRACT_MSG_FROM_MSG(msg, id_size)) << " | " << (EXTRACT_ID_FROM_MSG(msg, id_size)) << endl;
 }
 
 void alarm_dummy (int dummy) {};

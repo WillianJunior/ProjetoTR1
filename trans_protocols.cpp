@@ -57,7 +57,8 @@ int SendRecv::sendMsg(MSG_TYPE msg, ACK_TYPE *slast) {
 	msg_temp.msg = apply_error(msg_temp.msg, prob_error);
 
 	// send the package to the transmition mean buffer
-	cout << "Sending message: " << msg_temp.msg << endl;
+	cout << "Sending message: "; 
+	message_pretty_print(msg_temp.msg, slast_size);
 	if (msgsnd(inputChannelId, &msg_temp, sizeof(msgbuff), 0) < 0) {
 		cout << "Error sending package through the msg queue: " << strerror(errno) << endl;
 		exit(1);
