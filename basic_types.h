@@ -5,7 +5,7 @@
 #define ACK_TYPE unsigned int
 #define ID_TYPE unsigned int
 
-#define TIMEOUT 2
+#define TIMEOUT 6
 
 #define FULL_PACK_SIZE 32
 #define PACK_ID_SIZE 4
@@ -23,7 +23,8 @@
 #define IN_MSGQ_KEY 0x1927
 #define OUT_MSGQ_KEY 0x1928
 
-//#define MANUAL_ERROR
+#define MANUAL_ERROR
+//#define AUTO_DELAY
 
 enum protocols_options {
 	STOPNWAIT = 1,

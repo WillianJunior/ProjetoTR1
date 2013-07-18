@@ -10,7 +10,9 @@ int SelectiveRepeat::recvMsg (MSG_TYPE *msg, ACK_TYPE *rnext) {
 
 	ackbuff ack;
 	msgbuff msg_temp;
-	unsigned int temp;
+	#ifdef AUTO_DELAY
+	int delay;
+	#endif
 	
 	ack.mtype = 1;
 	msg_temp.mtype = 1;
@@ -36,8 +38,7 @@ int SelectiveRepeat::recvMsg (MSG_TYPE *msg, ACK_TYPE *rnext) {
 		// if ok send updated rnext
 		ack.ack = (ACK_TYPE)ACK;
 		ack.ack <<= ACK_TYPE_SIZE;
-		temp = EXTRACT_ID_FROM_MSG(msg_temp.msg, identifiers_size);
-		*rnext = nextRNext(temp);
+		*rnext = nextRNext(EXTRACT_ID_FROM_MSG(msg_temp.msg, identifiers_size));
 		ack.ack += *rnext;
 		ack.ack <<= CRC_SIZE;
 		ack.ack += crc(ack.ack);
@@ -52,12 +53,29 @@ int SelectiveRepeat::recvMsg (MSG_TYPE *msg, ACK_TYPE *rnext) {
 		#endif
 		ack.ack = apply_error(ack.ack, prob_error);
 
+		#ifdef AUTO_DELAY
+		// add a delay
+		delay = rand()%MAX_DELAY;
+		cout << "Transmission delay: " << delay << endl;
+		sleep(delay);
+		#endif
+
+		#ifdef MANUAL_ERROR
+		cout << "send this ack? (0,N/1,Y)";
+		cin >> prob_error;
+		if(prob_error == 1) {
+		#endif
+
 		if (msgsnd(outputChannelId, &ack, sizeof(ackbuff), 0) < 0) {
 			cout << "Error sending package through the msg queue: " << strerror(errno) << endl;
 			exit(1);
 		}
 		*msg = msg_temp.msg;
 		*rnext = EXTRACT_ID_FROM_MSG(msg_temp.msg, identifiers_size);
+
+		#ifdef MANUAL_ERROR
+		}
+		#endif		
 
 		return true;
 	}
@@ -72,6 +90,7 @@ int SelectiveRepeat::sendMsgStream (MSG_TYPE *stream, int size) {
 	ID_TYPE ack_count;
 	int nack_flag;
 	ACK_TYPE i, j;
+	int waiter = 0;
 
 	signal(SIGALRM, alarm_dummy);
 
@@ -106,6 +125,12 @@ int SelectiveRepeat::sendMsgStream (MSG_TYPE *stream, int size) {
 				ack_count++;
 			}
 		}
+
+		#ifdef MANUAL_ERROR
+		cout << "Shaw we go? (Y,1/N,0)" << endl;
+		while (waiter == 0)
+			cin >> waiter;
+		#endif
 
 		// set a alarm to wait for the acks. WARNING: race condition with the alarm and the msgrcv. the alarm can happen in the while body
 		alarm(timeout);
