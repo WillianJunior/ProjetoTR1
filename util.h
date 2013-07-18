@@ -25,5 +25,11 @@ void message_pretty_print (MSG_TYPE msg, ID_TYPE id_size);
 
 void alarm_dummy (int dummy);
 
+float stopnwait_eff ();
+
+float gobackn_eff ();
+
+float selectiverepeat_eff ();
+
 #endif
 
