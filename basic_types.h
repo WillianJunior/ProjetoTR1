@@ -13,7 +13,7 @@
 //#define WINDOW_SIZE pow(2,PACK_ID_SIZE)
 #define WINDOW_SIZE 5
 
-#define PROB_ERROR 0.00
+#define PROB_ERROR 0.03
 #define CRC_GEN_POL 15
 #define CRC_SIZE 3
 

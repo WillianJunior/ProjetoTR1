@@ -56,7 +56,7 @@ int SelectiveRepeat::recvMsg (MSG_TYPE *msg, ACK_TYPE *rnext) {
 			cout << "Error sending package through the msg queue: " << strerror(errno) << endl;
 			exit(1);
 		}
-		*msg = EXTRACT_MSG_FROM_MSG(msg_temp.msg, identifiers_size);
+		*msg = msg_temp.msg;
 		*rnext = EXTRACT_ID_FROM_MSG(msg_temp.msg, identifiers_size);
 
 		return true;
