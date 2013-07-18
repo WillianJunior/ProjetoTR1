@@ -63,3 +63,43 @@ void message_pretty_print (MSG_TYPE msg, ID_TYPE id_size) {
 }
 
 void alarm_dummy (int dummy) {};
+
+float stopnwait_eff (FULL_PACK_SIZE,PACK_ID_SIZE,CRC_SIZE,PROB_ERROR, MAX_DELAY) {
+  float no, na, nf, pf, t_total, r;
+
+  no = (FULL_PACK_SIZE - PACK_ID_SIZE - CRC_SIZE);
+  na = no;
+  nf = FULL_PACK_SIZE;
+  t_total = (2 * MAX_DELAY);
+  r = (FULL_PACK_SIZE/MAX_DELAY);
+  pf = PROB_ERROR;
+  
+  efficiencySW = ( (1 - ( no / nf ) ) / (1 + ( na / nf ) + ( (t_total * r) / nf ) ) ) * (1 - pf);
+
+  return efficiencySW;
+}
+
+float gobackn_eff (FULL_PACK_SIZE,PACK_ID_SIZE,CRC_SIZE,PROB_ERROR, WINDOW_SIZE) {
+  float no, nf, pf, ws;
+
+  no = (FULL_PACK_SIZE - PACK_ID_SIZE - CRC_SIZE);
+  nf = FULL_PACK_SIZE;
+  pf = PROB_ERROR;
+  ws = WINDOW_SIZE;
+
+  efficiencyGB = ( (1 - ( no / nf) ) / (1 + (ws - 1) * pf) ) * (1 - pf)
+
+  return efficiencyGB;
+}
+
+float selectiverepeat_eff (FULL_PACK_SIZE,PACK_ID_SIZE,CRC_SIZE,PROB_ERROR) {
+  float no, nf, pf;
+
+  no = (FULL_PACK_SIZE - PACK_ID_SIZE - CRC_SIZE);
+  nf = FULL_PACK_SIZE;
+  pf = PROB_ERROR;
+  
+  efficiencySR = ( (1 - ( no / nf ) )  * (1 - pf);
+
+  return efficiencySR;
+}
