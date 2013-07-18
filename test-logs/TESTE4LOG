@@ -1,0 +1,125 @@
+TESTE4LOG:
+
+___________________________________________________________________________________
+
+Parameters:
+
+stream size = 10
+frame size = 32
+crc size = 3
+frame id size = 1
+
+___________________________________________________________________________________
+
+Test:
+e0 - x - 0 - a1 - 1 - ea0 - 1 - a0 - 0 - la1 - 0 - a1
+
+___________________________________________________________________________________
+
+willian@willian-asus-laptop:~/git/ProjetoTR1_ssh$ ./main 
+
+Select your protocol:
+1 - Stop and Wait
+2 - Go Back N
+3 - Selective Repeat
+9 - Exit
+
+1
+stopnwait
+
+Efficiency: 5.61157%
+Error chance (0-1): 0.5
+Sending message: Message: 163775855 | 1
+Shaw we go? (Y,1/N,0)
+1
+Waiting for the acknowledge
+ack received: 30298128
+Timeout!
+Error chance (0-1): 0
+Sending message: Message: 10 | 0
+Shaw we go? (Y,1/N,0)
+1
+Waiting for the acknowledge
+ack received: 15
+Received correct acknowledge
+Error chance (0-1): 0
+Sending message: Message: 20 | 1
+Shaw we go? (Y,1/N,0)
+1
+Waiting for the acknowledge
+ack received: 1724418675
+Acknowledge failed on CRC check
+Error chance (0-1): 0
+Sending message: Message: 20 | 1
+Shaw we go? (Y,1/N,0)
+1
+Waiting for the acknowledge
+ack received: 0
+Received correct acknowledge
+Error chance (0-1): 0
+Sending message: Message: 30 | 0
+Shaw we go? (Y,1/N,0)
+1
+Waiting for the acknowledge
+ack received: 0
+Timeout!
+Error chance (0-1): 0
+Sending message: Message: 30 | 0
+Shaw we go? (Y,1/N,0)
+1
+Waiting for the acknowledge
+ack received: 15
+Received correct acknowledge
+Error chance (0-1): 
+
+
+
+___________________________________________________________________________________
+
+willian@willian-asus-laptop:~/git/ProjetoTR1_ssh$ ./receiver 
+
+Select your protocol:
+1 - Stop and Wait
+2 - Go Back N
+3 - Selective Repeat
+9 - Exit
+
+1
+stopnwait
+
+Waiting message...
+Received message: 2620413693
+crc: 7
+Error during transmition...Exiting...
+Waiting message...
+Received message: 165
+crc: 0
+Message received - Sending acknowledge: 1
+Error chance (0-1): 0
+send this ack? (0,N/1,Y)1
+Waiting message...
+Received message: 330
+crc: 0
+Message received - Sending acknowledge: 0
+Error chance (0-1): 0.5
+send this ack? (0,N/1,Y)1
+Waiting message...
+Received message: 330
+crc: 0
+Message received isn't the requested - expected 0 but received 1 - Sending acknowledge
+Error chance (0-1): 0
+Waiting message...
+Received message: 480
+crc: 0
+Message received - Sending acknowledge: 1
+Error chance (0-1): 0
+send this ack? (0,N/1,Y)0
+Waiting message...
+Received message: 480
+crc: 0
+Message received isn't the requested - expected 1 but received 0 - Sending acknowledge
+Error chance (0-1): 0
+Waiting message...
+
+
+

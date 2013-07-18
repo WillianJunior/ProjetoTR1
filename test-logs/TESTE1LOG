@@ -1,0 +1,197 @@
+TESTE1LOG:
+
+___________________________________________________________________________________
+
+Parameters:
+
+window = 5
+stream size = 10
+frame size = 32
+crc size = 3
+frame id size = 4
+
+___________________________________________________________________________________
+
+Test:
+0,1,e2,e3,e4 - a0, a1, n2, n3, n4 - 2,3,4,5,6 - a2,a3,a4,a5,a6 - 7,8,9 - a7,a8,a9
+
+___________________________________________________________________________________
+
+willian@willian-asus-laptop:~/git/ProjetoTR1_ssh$ ./main 
+
+Select your protocol:
+1 - Stop and Wait
+2 - Go Back N
+3 - Selective Repeat
+9 - Exit
+
+3
+selective repeat
+
+Error chance (0-1): 0
+Sending message: Message: 10 | 0
+Error chance (0-1): 0
+Sending message: Message: 20 | 1
+Error chance (0-1): 0.5
+Sending message: Message: 14470368 | 7
+Error chance (0-1): 0.5
+Sending message: Message: 9603615 | 0
+Error chance (0-1): 0.5
+Sending message: Message: 13721013 | 9
+Shaw we go? (Y,1/N,0)
+1
+Error chance (0-1): 0
+Sending message: Message: 30 | 2
+Error chance (0-1): 0
+Sending message: Message: 40 | 3
+Error chance (0-1): 0
+Sending message: Message: 50 | 4
+Error chance (0-1): 0
+Sending message: Message: 60 | 5
+Error chance (0-1): 0
+Sending message: Message: 70 | 6
+Shaw we go? (Y,1/N,0)
+1
+Error chance (0-1): 0
+Sending message: Message: 80 | 7
+Error chance (0-1): 0
+Sending message: Message: 90 | 8
+Error chance (0-1): 0
+Sending message: Message: 100 | 9
+Error chance (0-1): 0
+Sending message: Message: 0 | 10
+Error chance (0-1): 0
+Sending message: Message: 0 | 11
+Shaw we go? (Y,1/N,0)
+1
+
+Select your protocol:
+1 - Stop and Wait
+2 - Go Back N
+3 - Selective Repeat
+9 - Exit
+
+
+___________________________________________________________________________________
+
+willian@willian-asus-laptop:~/git/ProjetoTR1_ssh$ ./receiver 
+
+Select your protocol:
+1 - Stop and Wait
+2 - Go Back N
+3 - Selective Repeat
+9 - Exit
+
+3
+selective repeat
+
+[SelectiveRepeat] Waiting message...
+Received message: 1285
+crc: 0
+Message received: Message: 10 | 0
+Sending acknowledge: 1
+Error chance (0-1): 0
+send this ack? (0,N/1,Y)1
+Shifted
+[SelectiveRepeat] Waiting message...
+Received message: 2570
+crc: 0
+Message received: Message: 20 | 1
+Sending acknowledge: 2
+Error chance (0-1): 0
+send this ack? (0,N/1,Y)1
+Shifted
+[SelectiveRepeat] Waiting message...
+Received message: 1852207161
+crc: 5
+Error during transmition...Exiting...
+[SelectiveRepeat] Waiting message...
+Received message: 1229262723
+crc: 7
+Error during transmition...Exiting...
+[SelectiveRepeat] Waiting message...
+Received message: 1756289738
+crc: 4
+Error during transmition...Exiting...
+[SelectiveRepeat] Waiting message...
+Received message: 3857
+crc: 0
+Message received: Message: 30 | 2
+Sending acknowledge: 3
+Error chance (0-1): 0
+send this ack? (0,N/1,Y)1
+Shifted
+[SelectiveRepeat] Waiting message...
+Received message: 5147
+crc: 0
+Message received: Message: 40 | 3
+Sending acknowledge: 4
+Error chance (0-1): 0
+send this ack? (0,N/1,Y)1
+Shifted
+[SelectiveRepeat] Waiting message...
+Received message: 6437
+crc: 0
+Message received: Message: 50 | 4
+Sending acknowledge: 5
+Error chance (0-1): 0
+send this ack? (0,N/1,Y)1
+Shifted
+[SelectiveRepeat] Waiting message...
+Received message: 7725
+crc: 0
+Message received: Message: 60 | 5
+Sending acknowledge: 6
+Error chance (0-1): 0
+send this ack? (0,N/1,Y)1
+Shifted
+[SelectiveRepeat] Waiting message...
+Received message: 9010
+crc: 0
+Message received: Message: 70 | 6
+Sending acknowledge: 7
+Error chance (0-1): 0
+send this ack? (0,N/1,Y)1
+Shifted
+[SelectiveRepeat] Waiting message...
+Received message: 10297
+crc: 0
+Message received: Message: 80 | 7
+Sending acknowledge: 8
+Error chance (0-1): 0
+send this ack? (0,N/1,Y)1
+Shifted
+[SelectiveRepeat] Waiting message...
+Received message: 11588
+crc: 0
+Message received: Message: 90 | 8
+Sending acknowledge: 9
+Error chance (0-1): 0
+send this ack? (0,N/1,Y)1
+Shifted
+[SelectiveRepeat] Waiting message...
+Received message: 12874
+crc: 0
+Message received: Message: 100 | 9
+Sending acknowledge: 10
+Error chance (0-1): 0
+send this ack? (0,N/1,Y)1
+Shifted
+Stream: 
+stream[0] = 10
+stream[1] = 20
+stream[2] = 30
+stream[3] = 40
+stream[4] = 50
+stream[5] = 60
+stream[6] = 70
+stream[7] = 80
+stream[8] = 90
+stream[9] = 100
+
+Select your protocol:
+1 - Stop and Wait
+2 - Go Back N
+3 - Selective Repeat
+9 - Exit
+

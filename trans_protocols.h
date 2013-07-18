@@ -72,17 +72,6 @@ private:
 	int timeout_count;
 };
 
-/*class SlidingWindow : public TransProt {
-public:
-	SlidingWindow () : TransProt() {};
-	~SlidingWindow () {};
-	virtual int sendMsgStream (MSG_TYPE *stream, int size) = 0;
-	virtual int recvMsgStream (MSG_TYPE *stream, int size) = 0;
-protected:
-	int sendMsg (MSG_TYPE msg, ACK_TYPE *slast);
-	int recvMsg (MSG_TYPE *msg, ACK_TYPE *rnext);
-};*/
-
 class GoBackN : public SendRecv {
 public:
 	GoBackN (int timeout, int slast_size, int rnext_size, float prob_error, int window);
@@ -93,7 +82,7 @@ private:
 	int acknowledge (ackbuff *ack);		// return the last ack or nack from the buffer
 	ACK_TYPE nextRNext (ACK_TYPE rnext) {return ++rnext;};
 
-	int window;
+	ID_TYPE window;
 
 };
 

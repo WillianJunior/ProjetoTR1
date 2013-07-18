@@ -108,10 +108,21 @@ int SendRecv::recvMsg (MSG_TYPE *msg, ACK_TYPE *rnext) {
 		#endif
 		ack.ack = apply_error(ack.ack, prob_error);
 
+		#ifdef MANUAL_ERROR
+		cout << "send this ack? (0,N/1,Y)";
+		cin >> prob_error;
+		if(prob_error == 1) {
+		#endif
+
 		if (msgsnd(outputChannelId, &ack, sizeof(ackbuff), 0) < 0) {
 			cout << "Error sending package through the msg queue: " << strerror(errno) << endl;
 			exit(1);
 		}
+
+		#ifdef MANUAL_ERROR
+		}
+		#endif	
+		
 		*msg = EXTRACT_MSG(msg_temp.msg, slast_size);
 
 		return true;

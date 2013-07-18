@@ -43,6 +43,9 @@ int StopNWait::recvMsgStream (MSG_TYPE *stream, int size) {
 int StopNWait::acknowledge (ackbuff *ack) {
 
 	struct msqid_ds msg_info;
+	#ifdef MANUAL_ERROR
+	int waiter = 0;
+	#endif
 
 	signal(SIGALRM, alarm_dummy);
 
@@ -60,6 +63,13 @@ int StopNWait::acknowledge (ackbuff *ack) {
 		}
 		timeout_count = 0;
 	}
+
+	#ifdef MANUAL_ERROR
+	cout << "Shaw we go? (Y,1/N,0)" << endl;
+	while (waiter == 0)
+		cin >> waiter;
+	#endif
+
 
 	// wait for the ack or the timeout
 	cout << "Waiting for the acknowledge" << endl;

@@ -1,79 +1,60 @@
 #include "trans_protocols.h"
 
 GoBackN::GoBackN (int timeout, int slast_size, int rnext_size, float prob_error, int window): SendRecv(timeout, slast_size, rnext_size, prob_error) {
- this->window = window;
+	this->window = window;
 }
 
-//int GoBackN::acknowledge (ackbuff *ack) {
-  
- //ackbuff ack_temp;
-//	int ack_count = 0;
-
-//	while (msgrcv(outputChannelId, ack, sizeof(ackbuff), 0, IPC_NOWAIT) >= 0)
-//	 ack_count++;
-//
-//	if (ack_count == 0)
-//	 return false;
-//
-//	if (crc(ack->ack) != 0)
-//	 cout << "Acknowledge failed on CRC check" << endl;
- 	  
-//	return true;
-//}
-
 int GoBackN::sendMsgStream (MSG_TYPE *stream, int size) {
-  
- ackbuff ack;
- ackbuff* bolacha;
- ACK_TYPE i, j;
 
- // the first window is the window 0
- i = 0;
+	ackbuff ack, temp_ack;
+	ID_TYPE i;
 
-bolacha = (ackbuff*)malloc(sizeof(ackbuff));
+	// the first window is the window 0
+	i = 0;
 
- 	// 
- while (i<(ACK_TYPE)size) {
- 	// set the window timeout
- 	// alarm(TIMEOUT);
+	while (i<(ID_TYPE)size) {
 
- 	j = i;
+		// send a window
+		for (ID_TYPE j=i;j-i<window && j<(ID_TYPE)size; j++) {
+			cout << "Sending package " << j << endl;
+			sendMsg(stream[j], &j);
+		}
 
- 	// send a window
- 	for (;j-i<WINDOW_SIZE && j<(ACK_TYPE)size; j++) {
- 	 cout << "Sending package " << j << endl;
- 	 sendMsg(stream[j], &j);
- 	}
+		// wait for the transmition timeout
+		sleep(timeout);
 
- 	// wait for the transmition timeout
- 	sleep(timeout);
+		int ack_count = 0;
 
- 	int ack_count = 0;
+		// get the first ack and then compare if there is a newer to get
+		if (msgrcv(outputChannelId, &ack, sizeof(ackbuff), 0, IPC_NOWAIT) >= 0)
+			ack_count++;
+		while (msgrcv(outputChannelId, &temp_ack, sizeof(ackbuff), 0, IPC_NOWAIT) >= 0) {
+			if (crc(temp_ack.ack) == 0)
+				ack = temp_ack;
+			ack_count++;
+		}
 
- 	while (msgrcv(outputChannelId, bolacha, sizeof(ackbuff), 0, IPC_NOWAIT) >= 0)
- 	ack_count++;
+		// if no ack or nack, poll, to check if the receiver is still there?
+		if (ack_count == 0)
+			cout << "No acks nor nacks received" << endl;
+		else if (crc(ack.ack) != 0)
+			cout << "None of the acknowledges passed on CRC check" << endl; 
+		else {
+			cout << "Shifting window" << endl;
+			cout << "Ack received: " << (EXTRACT_ID_FROM_ACK(ack.ack, slast_size)) << endl;
+			if (EXTRACT_ID_FROM_ACK(ack.ack, slast_size) < i+window) {
+				cout << "Nack found: " << (EXTRACT_ID_FROM_ACK(ack.ack, slast_size)) << endl;
+				i = EXTRACT_ID_FROM_ACK(ack.ack, slast_size);
+			}
+			// ack only
+			else {
+				cout << "Setting next window" << endl;
+				i += window;
+			}
+		}
+	}
 
- 	// if no ack or nack, poll, to check if the receiver is still there
- 	if (ack_count == 0) {
- 	 cout << "No acks nor nacks received" << endl;
- 	} else if (crc(bolacha->ack) != 0)
- 	 cout << "Acknowledge failed on CRC check" << endl; 
- 	 else {
- 	 cout << "Window closed. Checking the acks" << endl;
- 	 cout << "Ack received: " << (EXTRACT_RNEXT(ack.ack)) << endl;
- 	 if (EXTRACT_RNEXT(ack.ack) < j) {
- 	 cout << "Nack found: " << (EXTRACT_RNEXT(ack.ack)) << endl;
- 	 i = EXTRACT_RNEXT(ack.ack);
- 	 }
- 	 // ack only
- 	 else {
- 	 cout << "Setting next window" << endl;
- 	 i = j;
- 	 }
- 	}
- }
-
- return 0;
+	return 0;
 }
 
 int GoBackN::recvMsgStream (MSG_TYPE *stream, int size) {
@@ -82,7 +63,7 @@ int GoBackN::recvMsgStream (MSG_TYPE *stream, int size) {
 
  for (int i=0; i<size; i++) {
  	if (!recvMsg(&stream[i], &rnext))
- 	 i--;
+ 		i--;
  }
 
  return 0;

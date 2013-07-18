@@ -1,0 +1,142 @@
+TESTE6LOG:
+
+___________________________________________________________________________________
+
+Parameters:
+
+stream size = 10
+window = 5
+frame size = 32
+crc size = 3
+frame id size = 4
+
+___________________________________________________________________________________
+
+Test:
+
+
+___________________________________________________________________________________
+
+willian@willian-asus-laptop:~/git/ProjetoTR1_ssh$ ./main 
+
+Select your protocol:
+1 - Stop and Wait
+2 - Go Back N
+3 - Selective Repeat
+9 - Exit
+
+2
+go back n
+
+Efficiency: 21.875%
+Sending package 0
+Sending message: Message: 10 | 0
+Sending package 1
+Sending message: Message: 20 | 1
+Sending package 2
+Sending message: Message: 30 | 2
+Sending package 3
+Sending message: Message: 40 | 3
+Sending package 4
+Sending message: Message: 50 | 4
+Shifting window
+Ack received: 5
+Setting next window
+Sending package 5
+Sending message: Message: 60 | 5
+Sending package 6
+Sending message: Message: 70 | 6
+Sending package 7
+Sending message: Message: 80 | 7
+Sending package 8
+Sending message: Message: 90 | 8
+Sending package 9
+Sending message: Message: 100 | 9
+Shifting window
+Ack received: 10
+Setting next window
+
+Select your protocol:
+1 - Stop and Wait
+2 - Go Back N
+3 - Selective Repeat
+9 - Exit
+
+
+
+
+___________________________________________________________________________________
+
+willian@willian-asus-laptop:~/git/ProjetoTR1_ssh$ ./receiver 
+
+Select your protocol:
+1 - Stop and Wait
+2 - Go Back N
+3 - Selective Repeat
+9 - Exit
+
+2
+go back n
+
+Waiting message...
+Received message: 1285
+crc: 0
+Message received - Sending acknowledge: 1
+Waiting message...
+Received message: 2570
+crc: 0
+Message received - Sending acknowledge: 2
+Waiting message...
+Received message: 3857
+crc: 0
+Message received - Sending acknowledge: 3
+Waiting message...
+Received message: 5147
+crc: 0
+Message received - Sending acknowledge: 4
+Waiting message...
+Received message: 6437
+crc: 0
+Message received - Sending acknowledge: 5
+Waiting message...
+Received message: 7725
+crc: 0
+Message received - Sending acknowledge: 6
+Waiting message...
+Received message: 9010
+crc: 0
+Message received - Sending acknowledge: 7
+Waiting message...
+Received message: 10297
+crc: 0
+Message received - Sending acknowledge: 8
+Waiting message...
+Received message: 11588
+crc: 0
+Message received - Sending acknowledge: 9
+Waiting message...
+Received message: 12874
+crc: 0
+Message received - Sending acknowledge: 10
+Stream: 
+stream[0] = 10
+stream[1] = 20
+stream[2] = 30
+stream[3] = 40
+stream[4] = 50
+stream[5] = 60
+stream[6] = 70
+stream[7] = 80
+stream[8] = 90
+stream[9] = 100
+
+Select your protocol:
+1 - Stop and Wait
+2 - Go Back N
+3 - Selective Repeat
+9 - Exit
+
+
+
+
+

@@ -25,23 +25,23 @@ int main () {
 
 			case STOPNWAIT:
 				cout << "stopnwait" << endl << endl;
+				cout << "Efficiency: " << stopnwait_eff()*100 << '%' << endl;
 				sender = new StopNWait(TIMEOUT, PROB_ERROR);
 				sender->sendMsgStream(stream, 10);
-				stopnwait_eff();
 				break;
 
 			case GOBACKN:
 				cout << "go back n" << endl << endl;
+				cout << "Efficiency: " << gobackn_eff()*100 << '%' << endl;
 				sender = new GoBackN(TIMEOUT, PACK_ID_SIZE, PACK_ID_SIZE, PROB_ERROR, WINDOW_SIZE);
 				sender->sendMsgStream(stream, 10);
-				gobackn_eff();
 				break;
 
 			case SELECTIVEREPEAT:
 				cout << "selective repeat" << endl << endl;
+				cout << "Efficiency: " << selectiverepeat_eff()*100 << '%' << endl;
 				sender = new SelectiveRepeat(TIMEOUT, PACK_ID_SIZE, PROB_ERROR, WINDOW_SIZE);
 				sender->sendMsgStream(stream, 10);
-				selectiverepeat_eff();
 				break;
 
 			case EXIT:
