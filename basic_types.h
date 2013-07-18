@@ -18,13 +18,14 @@
 #define CRC_SIZE 3
 
 #define RAND_SEED time(NULL)
+#define MAX_DELAY 4
 
 #define IN_MSGQ_KEY 0x1927
 #define OUT_MSGQ_KEY 0x1928
 
 //#define MANUAL_ERROR
 
-enum protocols_options {  
+enum protocols_options {
 	STOPNWAIT = 1,
 	GOBACKN = 2,
 	SELECTIVEREPEAT = 3,

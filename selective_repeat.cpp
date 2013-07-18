@@ -171,14 +171,14 @@ int SelectiveRepeat::recvMsgStream (MSG_TYPE *stream, int size) {
 		if(recvMsg(&msg_temp, &msg_num)) {
 			
 			// check if the package is already there
-			if (message_buffer[EXTRACT_ID_FROM_MSG(msg_temp, identifiers_size)].rcv_flag == ACK) {
+			if (message_buffer[EXTRACT_ID_FROM_MSG(msg_temp, identifiers_size)].rcv_flag == NACK) {
 				// insert the valid data into the message buffer and set it as received
 				message_buffer[EXTRACT_ID_FROM_MSG(msg_temp, identifiers_size)].payload = EXTRACT_MSG_FROM_MSG(msg_temp, identifiers_size);
 				message_buffer[EXTRACT_ID_FROM_MSG(msg_temp, identifiers_size)].msg_num = msg_num;
 				message_buffer[EXTRACT_ID_FROM_MSG(msg_temp, identifiers_size)].rcv_flag = ACK;
 
 				// shift the window, if possible
-				while(message_buffer[msg_count].rcv_flag == ACK) {
+				while(message_buffer[msg_count].rcv_flag == ACK && msg_count < (ID_TYPE)size) {
 					cout << "Shifted" << endl;
 					msg_count++;
 				}
@@ -186,6 +186,9 @@ int SelectiveRepeat::recvMsgStream (MSG_TYPE *stream, int size) {
 
 		}
 	}
+
+	for (int i=0;i<size;i++)
+		stream[i] = message_buffer[i].payload;
 
 	return 0;
 
